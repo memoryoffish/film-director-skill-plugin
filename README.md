@@ -106,6 +106,8 @@ claude plugin install film-crew --marketplace memoryoffish/film-director-skill-p
 
 宣传片里用到的几段 Freesound 录音，署名见 [CREDITS.md](CREDITS.md)。
 
+感谢 [LINUX DO](https://linux.do/) 提供技术交流与开源分享的社区空间。
+
 ## 许可证
 
 [Apache-2.0](LICENSE)。第三方资产保留各自的许可：`skills/film-director/blender-previz/assets/` 里的 KayKit 家具模型是 CC0（见该目录的 `LICENSE.txt`）。

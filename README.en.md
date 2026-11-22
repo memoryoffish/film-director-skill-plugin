@@ -106,6 +106,8 @@ The methods here draw on public tutorials and open-source projects, and each one
 
 The Freesound recordings used in the promo are credited in [CREDITS.md](CREDITS.md).
 
+Thanks to [LINUX DO](https://linux.do/) for a community space for technical exchange and open-source sharing.
+
 ## License
 
 [Apache-2.0](LICENSE). Third-party assets keep their own licenses: the KayKit furniture models in `skills/film-director/blender-previz/assets/` are CC0 (see the `LICENSE.txt` there).
