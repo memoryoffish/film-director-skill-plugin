@@ -1,0 +1,8 @@
+/* 风格切换的小按钮：哪套风格下都用字的颜色画，各套风格可以再改它 */
+.fs-switch{float:right;display:flex;margin:4px 0 8px 14px;font:12px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;position:relative;z-index:20}
+.fs-switch button{appearance:none;background:none;color:inherit;border:1px solid color-mix(in srgb,currentColor 32%,transparent);padding:0 11px;margin-left:-1px;cursor:pointer;opacity:.72}
+.fs-switch button:first-child{border-radius:10px 0 0 10px;margin-left:0}
+.fs-switch button:last-child{border-radius:0 10px 10px 0}
+.fs-switch button:hover{opacity:1}
+.fs-switch button[aria-pressed=true]{opacity:1;background:color-mix(in srgb,currentColor 14%,transparent);font-weight:600}
+.fs-switch.fs-in{float:none;margin:0;flex:none}

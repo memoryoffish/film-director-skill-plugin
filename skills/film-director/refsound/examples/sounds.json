@@ -1,0 +1,297 @@
+{
+ "pages": 4,
+ "keep": 16,
+ "n": 12,
+ "per_user": 3,
+ "licenses": [
+  "cc0",
+  "by"
+ ],
+ "sounds": {
+  "accordion": {
+   "note": "手风琴圆舞曲",
+   "queries": [
+    "accordion waltz",
+    "accordion music",
+    "accordion melody",
+    "musette accordion"
+   ],
+   "must": [
+    [
+     "accordion",
+     "accordeon",
+     "akkordeon",
+     "acordeon",
+     "bandoneon",
+     "musette"
+    ]
+   ],
+   "reject": [
+    "vocal",
+    "vocals",
+    "singing",
+    "sings",
+    "voice",
+    "drum",
+    "drums",
+    "band",
+    "orchestra",
+    "street",
+    "busker",
+    "crowd",
+    "single note",
+    "one note",
+    "chord only",
+    "sample pack",
+    "multisample",
+    "scale"
+   ],
+   "dur": [
+    8,
+    240
+   ],
+   "kind": "continuous"
+  },
+  "guitar": {
+   "note": "木吉他弹奏",
+   "queries": [
+    "acoustic guitar",
+    "acoustic guitar fingerpicking",
+    "acoustic guitar melody",
+    "classical guitar"
+   ],
+   "must": [
+    [
+     "guitar"
+    ],
+    [
+     "acoustic",
+     "classical",
+     "nylon",
+     "steel string",
+     "steel-string",
+     "fingerpicking",
+     "fingerstyle",
+     "folk"
+    ]
+   ],
+   "reject": [
+    "electric",
+    "distortion",
+    "overdrive",
+    "amp",
+    "vocal",
+    "vocals",
+    "singing",
+    "voice",
+    "drum",
+    "drums",
+    "bass",
+    "band",
+    "single note",
+    "one note",
+    "tuning",
+    "sample pack",
+    "multisample",
+    "string noise"
+   ],
+   "dur": [
+    8,
+    240
+   ],
+   "kind": "continuous"
+  },
+  "rain": {
+   "note": "雨声",
+   "queries": [
+    "rain",
+    "rain on window",
+    "steady rain",
+    "light rain"
+   ],
+   "must": [
+    [
+     "rain",
+     "rainy",
+     "raining",
+     "rainfall",
+     "drizzle"
+    ]
+   ],
+   "reject": [
+    "thunder",
+    "thunderstorm",
+    "storm",
+    "music",
+    "traffic",
+    "birds",
+    "rainforest"
+   ],
+   "dur": [
+    10,
+    240
+   ],
+   "kind": "continuous",
+   "skip": [
+    "ambient"
+   ]
+  },
+  "thunder": {
+   "note": "雷声",
+   "queries": [
+    "thunder",
+    "thunder clap",
+    "thunder rumble"
+   ],
+   "must": [
+    [
+     "thunder",
+     "thunderclap"
+    ]
+   ],
+   "reject": [
+    "music",
+    "cinematic",
+    "trailer"
+   ],
+   "dur": [
+    2,
+    60
+   ],
+   "kind": "event",
+   "skip": [
+    "lowfreq",
+    "tail"
+   ]
+  },
+  "dog": {
+   "note": "狗叫",
+   "queries": [
+    "dog bark",
+    "dog barking",
+    "dog barks"
+   ],
+   "must": [
+    [
+     "dog",
+     "dogs",
+     "puppy"
+    ],
+    [
+     "bark",
+     "barking",
+     "barks",
+     "woof"
+    ]
+   ],
+   "reject": [
+    "growl only",
+    "howl",
+    "whine",
+    "toy"
+   ],
+   "dur": [
+    0.5,
+    60
+   ],
+   "kind": "event"
+  },
+  "fire": {
+   "note": "篝火噼啪",
+   "queries": [
+    "campfire crackling",
+    "fire crackling",
+    "bonfire",
+    "wood fire crackle"
+   ],
+   "must": [
+    [
+     "fire",
+     "campfire",
+     "bonfire",
+     "fireplace"
+    ],
+    [
+     "crackle",
+     "crackling",
+     "crackles",
+     "burning",
+     "burn"
+    ]
+   ],
+   "reject": [
+    "music",
+    "explosion",
+    "fireworks",
+    "alarm",
+    "truck",
+    "gas"
+   ],
+   "dur": [
+    10,
+    240
+   ],
+   "kind": "continuous",
+   "skip": [
+    "ambient"
+   ]
+  },
+  "stream": {
+   "note": "溪水",
+   "queries": [
+    "stream water",
+    "creek water",
+    "brook babbling",
+    "mountain stream"
+   ],
+   "must": [
+    [
+     "stream",
+     "creek",
+     "brook"
+    ]
+   ],
+   "reject": [
+    "music",
+    "birds",
+    "birdsong",
+    "traffic",
+    "river rapids",
+    "waterfall"
+   ],
+   "dur": [
+    10,
+    240
+   ],
+   "kind": "continuous",
+   "skip": [
+    "ambient"
+   ]
+  },
+  "owl": {
+   "note": "猫头鹰叫",
+   "queries": [
+    "owl hoot",
+    "owl hooting",
+    "owl call"
+   ],
+   "must": [
+    [
+     "owl",
+     "owls"
+    ]
+   ],
+   "reject": [
+    "music",
+    "screech",
+    "barn owl screech",
+    "whistle imitation"
+   ],
+   "dur": [
+    1,
+    60
+   ],
+   "kind": "event"
+  }
+ }
+}

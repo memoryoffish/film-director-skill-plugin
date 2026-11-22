@@ -1,0 +1,17 @@
+/* Fancy：深色的放映厅。这一份只定颜色、字体、圆角、阴影；每一页都带着它。 */
+@property --fancy-a{syntax:'<angle>';inherits:false;initial-value:0deg}
+:root[data-style="fancy"]{
+  color-scheme:dark;
+  --f-bg:#06070b;--f-bg2:#0b0d13;--f-solid:#10121a;            /* 页面底、压一层的底、不透明的卡片 */
+  --f-glass:rgba(255,255,255,.045);--f-glass2:rgba(255,255,255,.085);   /* 玻璃卡片、悬停时 */
+  --f-edge:rgba(255,255,255,.09);--f-edge2:rgba(255,255,255,.2);        /* 细边、亮一点的边 */
+  --f-ink:#eef0f7;--f-ink2:#b6bbcb;--f-dim:#7d8397;
+  --f-violet:#8f7dff;--f-cyan:#4fd1f5;--f-pink:#ff6aa9;                 /* 三个点缀色 */
+  --f-grad:linear-gradient(100deg,#8f7dff,#4fd1f5 55%,#3ddc97);        /* 标题、光束用的渐变 */
+  --f-ok:#3ddc97;--f-warn:#ffb454;--f-run:#6ea8ff;--f-bad:#ff6b81;--f-idle:#6f758a;   /* 状态：合格 要重抽 进行中 失败 待检查 */
+  --f-wm:#7fb4ff;--f-in:#f3bb62;--f-fed:#3ddc97;--f-film:#ff7eb6;       /* 四种东西：白模 出图用的 进视频模型的 成片 */
+  --f-r:14px;--f-r2:9px;
+  --f-shadow:0 18px 50px rgba(0,0,0,.55);
+  --f-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+  --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}

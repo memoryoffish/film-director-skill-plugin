@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+.DS_Store
+refs/practical/prompt-skills/*.zip
+refs/practical/prompt-skills/wan3-pe/
+refs/practical/prompt-skills/sd25-pe/

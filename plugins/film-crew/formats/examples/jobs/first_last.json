@@ -1,0 +1,12 @@
+{
+ "name": "ex_first_last",
+ "duration": 4,
+ "resolution": "720P",
+ "ratio": "16:9",
+ "audio": true,
+ "prompt_extend": false,
+ "seed": 11,
+ "prompt": "镜头：中景，固定机位。地上的白色木箱被慢慢推向画面右边，最后停在尾帧的位置。\n声音：木箱擦过水泥地的摩擦声，没有配乐，没有人声。",
+ "first_frame": "media/room_a.png",
+ "last_frame": "media/room_b.png"
+}

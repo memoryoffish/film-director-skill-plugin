@@ -1,0 +1,68 @@
+{
+ "name": "smoke_wan",
+ "job": {
+  "name": "smoke_wan",
+  "model": "wan3.0-video",
+  "duration": 2,
+  "resolution": "480P",
+  "ratio": "16:9",
+  "audio": true,
+  "prompt_extend": false,
+  "seed": 1,
+  "prompt": "A white ceramic teapot on a wooden table by a rainy window. Steam rises slowly from the spout. Fixed camera, close-up, one continuous shot, no cuts. Sound: soft rain on the glass, no music, no speech."
+ },
+ "payload": {
+  "model": "wan3.0-video",
+  "input": {
+   "prompt": "A white ceramic teapot on a wooden table by a rainy window. Steam rises slowly from the spout. Fixed camera, close-up, one continuous shot, no cuts. Sound: soft rain on the glass, no music, no speech."
+  },
+  "parameters": {
+   "resolution": "480P",
+   "ratio": "16:9",
+   "duration": 2,
+   "audio": true,
+   "prompt_extend": false,
+   "watermark": false,
+   "seed": 1
+  }
+ },
+ "status": "DOWNLOADED",
+ "task_id": "9e866f57-08f7-4143-9b4b-6405035a860d",
+ "request_id": "d60364e4-e6e8-904c-8a4c-cb4f8e4ca213",
+ "submitted_utc": 1795160562.2066162,
+ "media": {
+  "programs": [],
+  "streams": [
+   {
+    "codec_type": "video",
+    "width": 854,
+    "height": 480,
+    "r_frame_rate": "30/1",
+    "nb_frames": "60"
+   },
+   {
+    "codec_type": "audio",
+    "r_frame_rate": "0/0",
+    "nb_frames": "88"
+   }
+  ],
+  "format": {
+   "duration": "2.020000"
+  }
+ },
+ "usage": {
+  "video_count": 1,
+  "duration": 2,
+  "SR": 480,
+  "output_video_duration": 2,
+  "input_video_duration": 0,
+  "fps": 30,
+  "ratio": "16:9"
+ },
+ "timing": {
+  "submit_time": "2026-11-20 15:42:42.176",
+  "scheduled_time": "2026-11-20 15:42:42.347",
+  "end_time": "2026-11-20 15:43:50.005"
+ },
+ "actual_prompt": null
+}

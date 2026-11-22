@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>展示台</title>
+<style>
+:root{--bg:#111214;--card:#1a1c1f;--head:#0c0d0f;--line:#2a2d31;--fg:#e6e6e6;--dim:#9aa0a6;--green:#5ecb8a;--flag:#ff6b6b;
+  --c-wm:#8ab4f8;--c-in:#e0b060;--c-fed:#5ecb8a;--c-film:#f28cb1;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --on:#fff;--flag-fg:#ffb3b3;--badge-fg:#ffd0d0;--cap:rgba(10,11,13,.8);--arrow:#5b6066;--none:#6b7076;--prompt:#d7def2;
+  --track:#141619;--bar:rgba(138,180,248,.16);--bar-ring:rgba(138,180,248,.35);--bar2:rgba(138,180,248,.32);--live:rgba(94,203,138,.5);
+  --playhead:#fff;--shade:rgba(0,0,0,.45);--lb:#151719;--play-fg:#0c0d0f}
+@media (prefers-color-scheme: light){:root{--bg:#f4f4f2;--card:#fff;--head:#ecece8;--line:#d8d8d2;--fg:#1c1c1b;--dim:#5f6368;--green:#1f8f50;
+  --flag:#d23b3b;--c-wm:#3d6fd0;--c-in:#a8740c;--c-fed:#1f8f50;--c-film:#c0457a;--on:#0b0b0b;--flag-fg:#a82828;--badge-fg:#8f1f1f;
+  --cap:rgba(255,255,255,.86);--arrow:#a3a7ad;--none:#8a8f95;--prompt:#22304d;--track:#eef0f2;--bar:rgba(61,111,208,.12);
+  --bar-ring:rgba(61,111,208,.4);--bar2:rgba(61,111,208,.28);--live:rgba(31,143,80,.32);--playhead:#111;--shade:rgba(0,0,0,.10);
+  --lb:#fafafa;--play-fg:#fff}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font:14px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
+button{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.wrap{max-width:1600px;margin:0 auto;padding:12px 16px 0}
+.dim{color:var(--dim)}
+.mono{font-family:var(--mono)}
+.strip{background:var(--head);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.strip h1{font-size:17px;margin:0}
+.meta{color:var(--dim);font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.chip{appearance:none;background:none;border:1px solid var(--line);border-radius:10px;padding:2px 10px;font-size:13px;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--green)}
+.chip[aria-pressed=true]{background:color-mix(in srgb,var(--green) 14%,transparent);border-color:var(--green);color:var(--on)}
+.chip b{color:var(--flag);font-weight:600;margin-left:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px}
+
+/* 首页：一部片一张卡 */
+.films{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}
+.fcard{appearance:none;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden;cursor:pointer}
+.fcard:hover{border-color:var(--green)}
+.fcard img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.fcard div{padding:9px 12px 11px}
+.fcard b{font-size:16px}
+.fcard .fl{color:var(--flag-fg);font-size:13px;margin-top:3px}
+.fl::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--flag);margin-right:6px;vertical-align:1px}
+
+/* 上：左边成片和白模预演（上下对齐），右边这一镜 */
+.main{display:grid;grid-template-columns:var(--lw,420px) minmax(0,1fr);gap:16px;align-items:start}
+.left{display:flex;flex-direction:column;gap:10px;min-width:0}
+.left figure{margin:0;border-top:3px solid var(--c);padding-top:6px}
+.left video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:6px}
+.left figcaption{font-size:12px;color:var(--dim);margin-top:2px;line-height:18px}
+.right{min-width:0}
+.info{display:flex;flex-wrap:wrap;align-items:baseline;align-content:flex-start;gap:2px 12px;margin-bottom:8px;height:50px;overflow:hidden}
+.info h2{margin:0;font-size:18px}
+.info .t{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.info .what{font-size:15px;flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info .badge{flex:0 1 auto;min-width:0;max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info .sub{flex-basis:100%;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{border:1px solid var(--flag);color:var(--badge-fg);background:color-mix(in srgb,var(--flag) 10%,transparent);border-radius:8px;padding:1px 9px;font-size:13px}
+
+/* 中：这一镜的输入和输出，按 首 / 中 / 尾 三行对齐 */
+.pipe{display:grid;grid-template-columns:16px var(--w) 16px minmax(0,1fr) 16px var(--w) 16px var(--w);
+  grid-template-rows:auto repeat(3,var(--rh));gap:6px 4px;--w:calc(var(--rh) * 16 / 9)}
+:root{--rh:110px}
+.rl{font-size:12px;color:var(--dim);display:flex;align-items:center;justify-content:center}
+.ar{color:var(--arrow);display:flex;align-items:center;justify-content:center;font-size:15px}
+.cell{min-width:0;height:var(--rh);position:relative}
+.im{margin:0;height:100%;position:relative;background:#000;border-radius:5px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in}
+.im:hover{border-color:var(--fg)}
+.im img{width:100%;height:100%;object-fit:contain;display:block}
+.im figcaption{position:absolute;left:0;bottom:0;max-width:100%;padding:0 6px;font-size:11.5px;line-height:18px;background:var(--cap);
+  border-top-right-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.none{height:100%;width:100%;border:1px dashed var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--none);font-size:12px;text-align:center;padding:4px}
+.seek{appearance:none;background:none;cursor:pointer;flex-direction:column;line-height:1.5}
+.seek:hover{border-color:var(--fg);color:var(--fg)}
+.insbox{height:100%;display:flex;flex-direction:column;gap:3px}
+.eq{font-size:11.5px;color:var(--dim);line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ins{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 auto;min-height:0;align-content:flex-start;overflow:hidden}
+.ins .im{height:var(--th,48px);aspect-ratio:16/9}
+.ins .im figcaption{font-size:11px;line-height:16px}
+.chipjob{height:100%;border:1px solid var(--line);border-radius:5px;padding:6px 8px;font-size:12.5px;color:var(--dim);display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.chipjob b{color:var(--fg);font-family:var(--mono);font-weight:600}
+.chipjob .ins{flex:1 1 auto}
+.chipjob .ins .im{height:46px}
+.chipjob .rvl{color:var(--fg)}
+/* 进了视频模型的图：绿框 +「进视频模型」；白模静帧：「不进视频」；Blender 图直接喂给视频模型：蓝框 + 标出来 */
+.im.vin{border:2px solid var(--c-fed)}
+.im.bl{border:2px solid var(--c-wm)}
+.im .tg{position:absolute;top:3px;left:3px;max-width:calc(100% - 6px);font-size:10.5px;line-height:16px;padding:0 6px;border-radius:7px;background:var(--c-fed);
+  color:var(--play-fg);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.im .tg.no{background:var(--cap);color:var(--dim);font-weight:500;box-shadow:inset 0 0 0 1px var(--line)}
+.im .tg.bl{background:var(--c-wm)}
+/* 展示台：一条生成一块。上面「喂进视频模型的」（发出去的图、首尾帧、参考视频、参数、prompt），下面每一镜一行（白模 → 关键帧 → 成片） */
+.right{max-height:var(--rmax,none);overflow:auto;padding-right:4px}
+.info .use,.chain .use{appearance:none;background:none;border:1px solid var(--line);border-radius:8px;padding:0 7px;margin-left:4px;font:12px var(--mono);cursor:pointer;color:var(--dim)}
+.info .use.on,.chain .use.on{border-color:var(--green);color:var(--fg)}
+.cb{border:1.5px solid var(--c-fed);border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.cb-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font-size:13px;margin-bottom:6px}
+.cb-h b{color:var(--c-fed);font-size:14px}
+.sent{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+/* 这几处的说明放在图下面、最多两行（不盖在图上，不截成「re…」）；悬停和放大时看全 */
+.sent .im,.chain .im,.mk-in .im{height:auto;background:none;border:0;border-radius:0;overflow:visible}
+.sent .im img,.chain .im img,.mk-in .im img{height:auto;aspect-ratio:16/9;background:#000;border:1px solid var(--line);border-radius:5px}
+.sent .im.vin img,.chain .im.vin img{border:2px solid var(--c-fed)}
+.sent .im.bl img,.chain .im.bl img{border:2px solid var(--c-wm)}
+.sent .im:hover img,.chain .im:hover img,.mk-in .im:hover img{border-color:var(--fg)}
+.sent .im figcaption,.chain .im figcaption,.mk-in .im figcaption{position:static;background:none;padding:2px 1px 0;white-space:normal;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--fg)}
+.sent .im.vin,.chain .im.vin,.sent .im.bl,.chain .im.bl{border:0}
+.rvl{margin-top:6px;font-size:12.5px;color:var(--fg)}
+.prm{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:6px}
+.prm span{border:1px solid var(--line);border-radius:8px;padding:0 7px;font:12px/18px var(--mono);color:var(--dim)}
+.vpbox{margin-top:6px}
+.vp{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.55;color:var(--prompt);max-height:6.2em;overflow:hidden;
+  -webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.vp.open{max-height:none;-webkit-mask-image:none;mask-image:none}
+.vp a.imref{color:var(--c-fed);font-weight:700;cursor:zoom-in;text-decoration:underline;text-underline-offset:2px}
+.cb-x{appearance:none;background:none;border:1px solid var(--line);border-radius:8px;padding:0 9px;margin-top:3px;font-size:12px;cursor:pointer;color:var(--dim)}
+.chain{display:grid;grid-template-columns:62px repeat(3,minmax(0,1fr));gap:6px 10px;align-items:start}
+.ch-h{font-size:12px;color:var(--dim);border-bottom:1px solid var(--line);padding-bottom:2px}
+.ch-n{display:flex;flex-direction:column;gap:2px;align-items:flex-start;padding-top:2px}
+.ch-n .use{margin-left:0}
+.ch-n small{font:11px var(--mono);color:var(--dim)}
+.ch-c{min-width:0;border-radius:6px}
+.ch-c.cur,.ch-n.cur{background:color-mix(in srgb,var(--green) 10%,transparent);box-shadow:0 0 0 2px color-mix(in srgb,var(--green) 40%,transparent)}
+.ch-c .none{aspect-ratio:16/9;height:auto}
+details.mk{margin-top:4px;font-size:12.5px}
+details.mk summary{cursor:pointer;color:var(--c-in)}
+.mk-in{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:4px;margin-top:4px}
+.mk-in .im figcaption{-webkit-line-clamp:3;font-size:11px}
+.mk-p{margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.5;color:var(--prompt);max-height:16em;overflow:auto}
+
+/* prompt：默认三行，点「展开」看全文 */
+.prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:10px}
+.pr{border:1px solid var(--line);border-left:3px solid var(--c);border-radius:6px;padding:6px 10px;min-width:0}
+.pr-h{display:flex;align-items:baseline;gap:8px;font-size:12.5px}
+.pr-h .dim{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-h button{appearance:none;background:none;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;cursor:pointer;color:var(--dim)}
+.pr-h button:hover{color:var(--fg);border-color:var(--fg)}
+.pr-t{margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.55;color:var(--prompt);max-height:4.65em;overflow:hidden;
+  -webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+.pr.open .pr-t{max-height:none;-webkit-mask-image:none;mask-image:none}
+
+/* 下：时间线，粘在窗口底部 */
+.tl{position:sticky;bottom:0;z-index:5;margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:0 -10px 24px var(--shade)}
+.ctl{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-bottom:8px}
+.play{width:34px;height:34px;border:0;border-radius:50%;background:var(--green);color:var(--play-fg);cursor:pointer;font-size:13px;flex:none}
+.clock{color:var(--dim);font-family:var(--mono);font-size:13px;white-space:nowrap}
+.clock time{color:var(--fg);font-size:15px;font-weight:700}
+.legend{margin-left:auto;display:flex;gap:12px;font-size:12px;color:var(--dim);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.track{position:relative;height:44px;background:var(--track);border:1px solid var(--line);border-radius:6px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+.bar{position:absolute;top:8px;height:26px;margin-left:1px;padding:0 5px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;border:0;border-radius:4px;
+  font-family:var(--mono);font-size:11.5px;color:var(--fg);cursor:pointer;background:var(--bar);box-shadow:inset 0 0 0 1px var(--bar-ring)}
+.bar.two{background:var(--bar2)}
+.bar.tiny{color:transparent}
+.bar.flag{box-shadow:inset 0 0 0 2px var(--flag)}
+.bar.live{background:var(--live);box-shadow:inset 0 0 0 2px var(--green);color:var(--on)}
+.bar.live.flag{box-shadow:inset 0 0 0 2px var(--flag)}
+.mark{position:absolute;top:-9px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--flag);margin-left:-6px;pointer-events:none}
+.head{position:absolute;top:-6px;bottom:-4px;width:2px;margin-left:-1px;background:var(--playhead);box-shadow:0 0 8px var(--playhead);pointer-events:none}
+.head::after{content:"";position:absolute;top:-2px;left:-5px;width:12px;height:12px;border-radius:50%;background:var(--playhead);border:3px solid var(--card);box-sizing:border-box}
+.ticks{position:relative;height:16px;margin-top:3px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.ticks .s{transform:none}.ticks .e{transform:translateX(-100%)}
+.peek{position:absolute;bottom:52px;width:220px;margin-left:-110px;background:var(--head);border:1px solid var(--line);border-radius:6px;padding:4px;pointer-events:none;z-index:6}
+.peek img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:4px;background:#000}
+.peek div{font-size:12px;padding:3px 2px 0;line-height:1.4}
+
+/* 放大 */
+dialog#lb{border:1px solid var(--line);background:var(--lb);color:var(--fg);border-radius:10px;padding:0;max-width:98vw;max-height:98vh;width:98vw;height:96vh}
+dialog#lb::backdrop{background:rgba(0,0,0,.86)}
+.lb-h{display:flex;align-items:center;gap:12px;padding:6px 12px;border-bottom:1px solid var(--line);font-size:13px}
+.lb-h b{font-weight:600}
+.lb-h .dim{margin-left:auto}
+.lb-h button{appearance:none;background:none;border:1px solid var(--line);border-radius:8px;cursor:pointer;padding:0 9px}
+.lb-b{height:calc(96vh - 40px);overflow:auto;display:flex;align-items:center;justify-content:center;background:#000}
+.lb-b img{max-width:100%;max-height:100%;cursor:zoom-in}
+.lb-b.full{display:block}
+.lb-b.full img{max-width:none;max-height:none;cursor:zoom-out}
+
+/* 节点图：照每镜嵌进去的那份 ComfyUI 工作流画（位置、大小、标题、颜色、口、外面的框、拐点），画布按 ComfyUI 的深色画，只借样子不借代码 */
+.views{display:flex;gap:0}
+.views .chip{border-radius:0}.views .chip:first-child{border-radius:10px 0 0 10px}.views .chip:last-child{border-radius:0 10px 10px 0;margin-left:-1px}
+#console.gview{padding-top:6px}
+#console.gview .card.gv{margin-top:6px}
+.gv{padding:6px 8px 6px}
+.gv-canvas{position:relative;height:var(--gvh,520px);overflow:hidden;border-radius:6px;background-color:#1b1b1c;
+  background-image:radial-gradient(#323336 1.1px,transparent 1.3px);background-size:var(--dot,20px) var(--dot,20px);background-position:var(--dotx,0) var(--doty,0);
+  touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;color:#ddd}
+.gv-canvas.pan{cursor:grabbing}
+.gv-world{position:absolute;left:0;top:0;transform-origin:0 0}
+.gv-links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.gv-links polyline{fill:none;stroke-width:2.6;stroke-linejoin:round}
+.gv-links circle{stroke:#1b1b1c;stroke-width:1.5}
+/* 外面的框：这一镜（镜头名 · 起止 · 拍什么） */
+.cg{position:absolute;border-radius:6px;background:rgba(136,170,170,.10);border:1.5px solid rgba(136,170,170,.55);pointer-events:none}
+.cg b{position:absolute;left:10px;top:5px;right:10px;color:#a9c8c8;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+/* 节点：标题栏 color、底 bgcolor 都取工作流里的；大小就是工作流里的（标题栏 30 画在节点位置上面） */
+.cn{position:absolute;border-radius:8px;background:var(--bg,#353535);box-shadow:0 0 0 1px rgba(0,0,0,.55),0 5px 14px rgba(0,0,0,.4);
+  font:12.5px/1.35 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;color:#ddd}
+.cn-t{position:absolute;left:0;right:0;top:0;height:30px;display:flex;align-items:center;gap:8px;padding:0 10px;border-radius:8px 8px 0 0;
+  background:var(--tc,#222);font-size:15px;color:#ececec;white-space:nowrap;overflow:hidden}
+.cn-t::before{content:"";width:9px;height:9px;border-radius:50%;background:#8d8d8d;flex:none}
+.cn-t span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.cn-t .x{appearance:none;border:0;background:none;padding:0;font:inherit;color:#fff;text-decoration:underline dotted;cursor:pointer}
+.cn-i,.cn-o{position:absolute;height:20px;line-height:20px;font-size:12.5px;color:#b3b3b3;white-space:nowrap}
+.cn-i{left:22px}.cn-o{right:22px}
+.cn-i::before,.cn-o::after{content:"";position:absolute;top:6px;width:8px;height:8px;border-radius:50%;background:#8d8d8d}
+.cn-i::before{left:-18px;background:var(--lc,#64b5f6)}.cn-o::after{right:-18px}
+.cn-o.on::after{background:var(--lc,#64b5f6)}
+.cn-w{position:absolute;left:10px;right:10px;height:20px;border-radius:10px;background:#222;display:flex;justify-content:space-between;align-items:center;
+  padding:0 12px;font-size:12.5px;color:#9a9a9a;white-space:nowrap;overflow:hidden}
+.cn-w b{color:#e2e2e2;font-weight:400;overflow:hidden;text-overflow:ellipsis}
+.cn-p{position:absolute;left:10px;right:10px;background:#222;border-radius:6px;padding:5px 8px;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,"PingFang SC",monospace;
+  color:#dcdcdc;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;cursor:pointer}
+.cn-p:hover{outline:1px solid #666}
+.cn-m{position:absolute;left:6px;right:6px}
+.cn-m .im{height:100%;margin:0;border:0;border-radius:5px;background:#111}
+.cn-m .im figcaption{display:none}
+.cn-m .none{border-color:#444;color:#888}
+.cn-v{position:absolute}
+.cn-v video{display:block;width:100%;height:100%;background:#000;border-radius:5px;object-fit:contain}
+/* 页面另加的：重抽、重画在标题栏右头一个虚线小圈 ↻ ×N，点开看每一次 */
+.cn-x{appearance:none;flex:none;margin-left:auto;font:600 12.5px/18px var(--mono);padding:0 7px;border-radius:9px;border:1.5px dashed #b9e2b9;
+  color:#dff3df;background:rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
+.cn-x:hover{border-style:solid}
+.cn-x.bad{border-color:#ff8f8f;color:#ffd0d0}
+/* 画布角上：左上图例和有问题的那一句，右上按钮；都不占画布的高度 */
+.gv-tl,.gv-tr{position:absolute;top:4px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:6px;pointer-events:none}
+.gv-tl{left:10px;max-width:calc(100% - 330px)}.gv-tr{right:10px}
+.gv-tl>*,.gv-tr>*{pointer-events:auto}
+.gv-key{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:#aaa;background:rgba(27,27,28,.82);border-radius:6px;padding:2px 8px}
+.gv-key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.gv-tl .badge{background:rgba(60,20,20,.9)}
+.gv-tr .chip{background:rgba(27,27,28,.88);color:#ddd;border-color:#555}
+.gv-tr .chip:hover{border-color:#9ad09a}
+.gv-pop{position:absolute;z-index:4;max-width:min(560px,96%);background:var(--head);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.5;
+  box-shadow:0 8px 24px var(--shade);cursor:auto;color:var(--fg)}
+.gv-pop b{display:block;margin-bottom:3px}
+.gv-pop table{border-collapse:collapse;width:100%}
+.gv-pop td{padding:2px 8px 2px 0;vertical-align:top;white-space:nowrap}
+.gv-pop td:first-child{font-family:var(--mono)}
+.gv-pop .use{color:var(--green)}.gv-pop .no{color:var(--dim)}.gv-pop .err{color:var(--flag-fg);white-space:normal;min-width:12em}
+.gv-pop.txt{max-width:min(760px,94%);max-height:86%;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 var(--mono)}
+/* 节点图视图里时间线收紧一点，把高度让给画布；下面按阶段分三行：一行一个阶段横跨全片，点一格跳到那一镜 */
+#console.gview .tl{padding-top:6px;padding-bottom:4px;margin-top:6px}
+.tl.wl .ctl{margin-bottom:4px}
+.tl.wl .play{width:28px;height:28px}
+.tl.wl .track{height:34px}
+.tl.wl .bar{top:5px;height:24px}
+.tl.wl .ticks{height:14px;margin-top:1px}
+.tl.wl .track,.tl.wl .ticks,.tl.wl .lanes{margin-left:50px}
+.tl.wl .peek{bottom:84px;margin-left:-60px}
+.lanes{position:relative;margin-top:3px;display:grid;gap:2px}
+.lane{position:relative;height:9px}
+.lane b{position:absolute;right:100%;margin-right:8px;font-size:10px;font-weight:500;color:var(--dim);white-space:nowrap;line-height:9px}
+.lc{position:absolute;top:0;height:9px;margin-left:1px;border-radius:2px;font:8px/9px var(--mono);text-align:center;overflow:hidden;white-space:nowrap;cursor:pointer;color:var(--fg)}
+.lc.wm{background:color-mix(in srgb,var(--c-wm) 50%,transparent)}
+.lc.wm.off{background:none;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c-wm) 60%,transparent);color:var(--dim)}
+.lc.k{background:color-mix(in srgb,var(--c-in) calc(var(--a) * 100%),transparent)}
+.lc.g{background:color-mix(in srgb,var(--c-fed) 22%,transparent)}
+.lc.g.x{background:color-mix(in srgb,var(--c-fed) 70%,transparent);color:var(--play-fg);font-weight:700}
+.lc.bad{box-shadow:inset 0 0 0 1.5px var(--flag)}
+.lc.live{outline:1.5px solid var(--on);outline-offset:0;z-index:1}
+@media (max-width:700px){
+  .gv-key{display:none}
+  .gv-tl{right:10px;max-width:none}
+  #gv-flag{min-width:0;max-width:100%}
+  .gv-tl .badge{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+  .gv-tr{top:34px}
+  .gv-tr .chip{font-size:12px;padding:1px 8px}
+}
+
+@media (max-width:1000px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .pipe-scroll{overflow-x:auto}
+  .pipe{min-width:860px}
+  .legend{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div hidden id="media"><!--MEDIA--></div>
+<script type="application/json" id="data">/*DATA*/{}</script>
+
+<div id="home" class="wrap">
+  <header class="strip"><h1 id="home-title"></h1><span class="meta">每部片打开在有问题的那一镜</span></header>
+  <div class="films" id="films"></div>
+</div>
+
+<!--console-->
+<div id="console" class="wrap" hidden>
+  <header class="strip">
+    <button class="chip" id="back" type="button">← 全部</button>
+    <h1 id="title"></h1><span class="meta" id="meta"></span>
+    <nav class="views" id="views" hidden><button class="chip" type="button" data-v="console">展示台</button><button class="chip" type="button" data-v="graph">节点图</button></nav>
+    <nav class="chips" id="chips"></nav>
+  </header>
+  <section class="card main">
+    <div class="left">
+      <figure style="--c:var(--c-film)"><div id="filmslot"></div><figcaption>成片</figcaption></figure>
+      <figure style="--c:var(--c-wm)" id="pvbox"><video id="previz" preload="none" playsinline muted></video><figcaption>白模预演 · 跟着成片走</figcaption></figure>
+    </div>
+    <div class="right">
+      <div class="info" id="info"></div>
+      <div class="cb" id="sent"></div>
+      <div class="pipe-scroll"><div class="pipe" id="pipe"></div></div>
+      <div class="prompts" id="prompts"></div>
+    </div>
+  </section>
+  <section class="card gv" id="gv" hidden>
+    <div class="gv-canvas" id="gv-canvas">
+      <div class="gv-world" id="gv-world"><svg class="gv-links" id="gv-links" aria-hidden="true"></svg><div id="gv-dyn"></div></div>
+      <div class="gv-tl"><span id="gv-flag"></span><span class="gv-key"><span><i style="background:#335"></i>白模</span><span><i style="background:#535"></i>参考图</span><span><i style="background:#653"></i>关键帧</span><span><i style="background:#353"></i>视频</span><span>↻ ×N 重抽、重画几次，点开看</span><span>提示词点了看全文</span></span></div>
+      <div class="gv-tr"><button class="chip" id="gv-fit" type="button">适应窗口</button><button class="chip" id="gv-out" type="button" aria-label="缩小">−</button><button class="chip" id="gv-in" type="button" aria-label="放大">+</button><button class="chip" id="gv-export" type="button" title="下载这一镜的 ComfyUI 工作流（和 ComfyUI 里那份一样），拖进 ComfyUI 就能打开">导出 ComfyUI</button></div>
+      <div class="gv-pop" id="gv-pop" hidden></div>
+    </div>
+  </section>
+  <section class="card tl">
+    <div class="ctl">
+      <button class="play" id="play" type="button" aria-label="播放">▶</button>
+      <div class="clock"><time id="now">0:00.0</time> / <span id="total">0:00</span></div>
+      <button class="chip" id="prev" type="button">‹ 上一镜</button><button class="chip" id="next" type="button">下一镜 ›</button>
+      <span class="legend"><span><i style="background:var(--bar);box-shadow:inset 0 0 0 1px var(--bar-ring)"></i>只喂首帧</span>
+        <span><i style="background:var(--bar2)"></i>首帧 + 尾帧</span><span><i style="box-shadow:inset 0 0 0 2px var(--flag)"></i>有问题的镜头</span></span>
+    </div>
+    <div class="track" id="track"><div class="head" id="head"></div></div>
+    <div class="lanes" id="lanes" hidden></div>
+    <div class="ticks" id="ticks"></div>
+    <div class="peek" id="peek" hidden><img alt=""><div></div></div>
+  </section>
+</div>
+
+<dialog id="lb">
+  <div class="lb-h"><b id="lb-t"></b><span id="lb-n" class="mono dim"></span><span class="dim">← → 翻这一镜的图 · 点图看原尺寸 · Esc 关闭</span><button id="lb-x" type="button">×</button></div>
+  <div class="lb-b" id="lb-b"><img id="lb-i" alt=""></div>
+</dialog>
+<!--/console-->
+
+<script>
+/*lib*/
+// 展示台。FilmConsole(DATA, M, opt) 把 #console 一块接上数据，返回 {open(k), close()}。
+//   DATA：console.py 写的数据（data.json）；M：媒体名 → 地址（签过名的）。
+//   opt.video(F)：这部片用哪个 <video>（嵌进别的页面时传片卡上的那个，关掉时放回原处；不传就新建一个，地址取 F.film）。
+//   opt.onBack()：点「← 全部」；opt.peers(F)：顶栏按钮列哪几部片（下标），默认全部；opt.scroller：换片时滚回顶上的元素。
+//   open(k, at)：at 是镜头名时打开在那一镜（别的页面从某一镜跳进来用）。
+window.FilmConsole = function (DATA, M, opt) {
+  'use strict';
+  opt = opt || {};
+  const U = f => (f && M[f]) || null;
+  const $ = id => document.getElementById(id);
+  function h(tag, attrs, ...kids) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'text') e.textContent = v; else if (k === 'style') e.style.cssText = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+    }
+    for (const k of kids.flat()) if (k != null) e.append(k);
+    return e;
+  }
+  const clock = (t, d = 1) => { t = Math.floor(Math.max(0, t) * 10 ** d + 1e-6) / 10 ** d; const m = Math.floor(t / 60), s = t - m * 60;
+    return `${m}:${s.toFixed(d).padStart(d ? 3 + d : 2, '0')}`; };
+  const previz = $('previz'), track = $('track'), head = $('head'), slot = $('filmslot');
+  let own = null;      // 不传 opt.video 时自己的成片 <video>
+  let film = null, back = null, ac = null;
+  const flagShot = F => { const n = F.flag && F.flag.shots && F.flag.shots[0]; const i = F.shots.findIndex(s => s.n === n); return i < 0 ? 0 : i; };
+  $('back').onclick = () => { close(); if (opt.onBack) opt.onBack(); };
+
+  // ---------- 一部片 ----------
+  let F = null, T = 0, cur = -1, bars = [], raf = 0;
+  const shotAt = t => { const S = F.shots; for (let i = 0; i < S.length - 1; i++) if (t < S[i].t1) return i; return S.length - 1; };
+
+  function stop() { if (film) film.pause(); previz.pause(); }
+
+  function attach(v) {
+    ac = new AbortController(); const o = { signal: ac.signal };
+    v.addEventListener('play', () => { $('play').textContent = '❚❚'; syncPreviz(); if (!raf) loop(); }, o);
+    v.addEventListener('pause', () => { $('play').textContent = '▶'; syncPreviz(); }, o);
+    v.addEventListener('seeked', () => { if (v.readyState) { T = v.currentTime; render(); syncPreviz(); } }, o);
+    v.addEventListener('timeupdate', () => { if (v.readyState && !drag) { T = v.currentTime; render(); } }, o);
+  }
+
+  // 关掉：停下，借来的 <video> 放回原处、海报还原
+  function close() {
+    if (!F) return;
+    stop(); if (ac) ac.abort(); ac = null; cancelAnimationFrame(raf); raf = 0;
+    if (back) {
+      if (back.poster == null) film.removeAttribute('poster'); else film.setAttribute('poster', back.poster);
+      back.parent.insertBefore(film, back.next); back = null;
+    }
+    previz.removeAttribute('src'); previz.load();
+    F = null; film = null;
+  }
+
+  function open(k, at) {
+    close();
+    shownJob = null;
+    F = DATA.films[k];
+    if ($('home')) $('home').hidden = true;
+    $('console').hidden = false;
+    $('title').textContent = `《${F.title}》`;
+    // 镜头表是重建的（原运行没有 meta.json）、还没开拍，都在顶栏写明
+    $('meta').textContent = [F.plan ? '还没开拍' : null, F.genre, clock(F.seconds, 0), `${F.shots.length} 镜`, F.model, F.note].filter(Boolean).join(' · ');
+    $('meta').title = F.note || '';
+    const peers = opt.peers ? opt.peers(F) : DATA.films.map((_, j) => j);
+    $('chips').replaceChildren(...(peers.length > 1 ? peers : []).map(j => { const G = DATA.films[j];
+      return h('button', { class: 'chip', type: 'button', 'aria-pressed': String(j === k), onclick: () => open(j) },
+        `《${G.title}》${G.label ? ' ' + G.label : ''}`, G.flag ? h('b', { text: clock(G.flag.t, 0) }) : null); }));
+    if (opt.video) {
+      film = opt.video(F);
+      back = { parent: film.parentNode, next: film.nextSibling, poster: film.getAttribute('poster') };
+      slot.append(film);
+    } else {
+      if (!own) { own = h('video', { id: 'film', preload: 'none', playsinline: '', controls: '' }); slot.append(own); }
+      film = own;
+      film.removeAttribute('src'); film.load();
+      film.src = U(F.film) || '';
+    }
+    attach(film);
+    $('play').textContent = film.paused ? '▶' : '❚❚';
+    $('pvbox').hidden = !F.previz;
+    if (F.previz) previz.src = U(F.previz) || '';
+    $('total').textContent = clock(F.seconds, 0);
+    buildTrack();
+    cur = -1;
+    graphOpen();
+    size();
+    const ai = at ? F.shots.findIndex(s => s.n === at) : -1;
+    if (ai >= 0) seek(F.shots[ai].t0 + 0.01);
+    else if (film.readyState && film.currentTime > 0.05) { T = film.currentTime; render(); if (!film.paused) loop(); }   // 片卡上已经在看：接着那一刻
+    else seek(F.shots[flagShot(F)].t0 + 0.01);
+    (opt.scroller || window).scrollTo(0, 0);
+  }
+
+  // ---------- 时间线 ----------
+  function buildTrack() {
+    bars.forEach(b => b.remove()); track.querySelectorAll('.mark').forEach(m => m.remove());
+    const D = F.seconds, flagged = new Set((F.flag && F.flag.shots) || []);
+    bars = F.shots.map((s, i) => {
+      const b = h('button', { class: 'bar' + (s.last ? ' two' : '') + (flagged.has(s.n) ? ' flag' : ''), type: 'button', 'data-i': i, 'aria-label': `${s.n} ${s.what}`,
+        style: `left:${s.t0 / D * 100}%;width:calc(${(s.t1 - s.t0) / D * 100}% - 2px)` }, s.n);
+      track.insertBefore(b, head); return b;
+    });
+    if (F.flag) track.insertBefore(h('i', { class: 'mark', style: `left:${F.flag.t / D * 100}%`, title: F.flag.note }), head);
+    requestAnimationFrame(tinyBars);
+  }
+  // 刻度：间隔取让刻度不超过 12 个、也不挤（每个至少 64 px）的最小一档
+  function ticks() {
+    const D = F.seconds, most = Math.min(12, Math.max(3, Math.floor(track.clientWidth / 64)));
+    const step = [5, 10, 15, 30, 60, 120, 300, 600].find(x => D / x <= most) || 1200, out = [];
+    for (let t = 0; t <= D + 1e-6; t += step) out.push(h('span', { class: t === 0 ? 's' : '', style: `left:${t / D * 100}%`, text: clock(t, 0) }));
+    $('ticks').replaceChildren(...out);
+  }
+  function tinyBars() { if (!F) return; bars.forEach(b => b.classList.toggle('tiny', b.offsetWidth < 30)); ticks(); }
+  new ResizeObserver(() => F && !$('console').hidden && tinyBars()).observe(track);
+
+  const timeAtX = x => { const r = track.getBoundingClientRect(); return Math.min(1, Math.max(0, (x - r.left) / r.width)) * F.seconds; };
+  let drag = null;
+  track.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || !F) return;
+    track.setPointerCapture(e.pointerId);
+    drag = { id: e.pointerId, x: e.clientX, moved: false, bar: e.target.closest('.bar') };
+  });
+  track.addEventListener('pointermove', e => {
+    if (!F) return;
+    peek(e.clientX);
+    if (!drag || e.pointerId !== drag.id) return;
+    if (Math.abs(e.clientX - drag.x) > 4) drag.moved = true;
+    if (drag.moved) seek(timeAtX(e.clientX));
+  });
+  track.addEventListener('pointerup', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const { moved, bar } = drag; drag = null;
+    if (moved) seek(timeAtX(e.clientX));
+    else if (bar) seek(F.shots[+bar.dataset.i].t0 + 0.01);   // 点一镜：跳到这一镜开头
+    else seek(timeAtX(e.clientX));
+  });
+  track.addEventListener('pointercancel', () => { drag = null; });
+  track.addEventListener('pointerleave', () => { $('peek').hidden = true; });
+  function peek(x) {
+    const r = track.getBoundingClientRect(), s = F.shots[shotAt(timeAtX(x))], p = $('peek');
+    p.hidden = false;
+    p.style.left = `${Math.min(Math.max(x - r.left + 14, 110), r.width - 96)}px`;
+    const src = U(s.th);
+    if (p.firstElementChild.getAttribute('src') !== src) p.firstElementChild.src = src || '';
+    p.lastElementChild.textContent = `${s.n} · ${clock(s.t0)}–${clock(s.t1)} · ${s.what}`;
+  }
+
+  // ---------- 时间：成片带着走；成片还没加载时由页面自己记 ----------
+  function seek(t) {
+    T = Math.min(Math.max(0, t), F.seconds - 0.04);
+    film.currentTime = T;               // 没加载时只记下开始位置，不会去下载
+    if (F.previz) previz.currentTime = T;
+    render();
+  }
+  function render() {
+    if (view === 'graph') loopShot();   // 节点图里成片只放这一镜：到这一镜末尾回开头
+    head.style.left = `${T / F.seconds * 100}%`;
+    $('now').textContent = clock(T);
+    const i = shotAt(T);
+    if (i !== cur) show(i);
+  }
+  function syncPreviz() {
+    if (!F || !F.previz || view === 'graph') return;
+    if (Math.abs(previz.currentTime - film.currentTime) > 0.25) previz.currentTime = film.currentTime;
+    if (film.paused !== previz.paused) film.paused ? previz.pause() : previz.play().catch(() => {});
+  }
+  function loop() { if (!F) { raf = 0; return; } T = film.currentTime; render(); syncPreviz(); raf = film.paused ? 0 : requestAnimationFrame(loop); }
+  $('play').onclick = () => (film.paused ? film.play().catch(() => {}) : film.pause());
+  $('prev').onclick = () => seek(F.shots[Math.max(0, cur - 1)].t0 + 0.01);
+  $('next').onclick = () => seek(F.shots[Math.min(F.shots.length - 1, cur + 1)].t0 + 0.01);
+
+  // ---------- 这一镜 ----------
+  let G = [];   // 这一镜所有的图，放大时左右翻
+  function fig(f, label, cls, tag) {   // tag：[字, 样式]，左上角的小标签（进视频模型 / 不进视频）
+    const src = U(f);
+    if (!src) return h('div', { class: 'none', text: label ? `${label}（没有文件）` : '没有' });
+    const k = G.push({ src, label }) - 1;
+    return h('figure', { class: 'im' + (cls ? ' ' + cls : ''), title: tag ? `${label} · ${tag[0]}` : label, onclick: () => zoom(k) },
+      h('img', { src, alt: label, loading: 'lazy' }), tag ? h('span', { class: 'tg ' + (tag[1] || ''), text: tag[0] }) : null, h('figcaption', { text: label }));
+  }
+  const none = t => h('div', { class: 'none', text: t });
+  const ar = on => h('div', { class: 'ar', text: on ? '→' : '' });
+  // 精简时成片只抽了中间一帧：头、尾两格换成按钮，点了左边成片跳到那一刻
+  function filmCell(f, t, lab) {
+    if (F.plan) return none('还没开拍');
+    if (f) return fig(f, `${lab} ${clock(t)}`);
+    return h('button', { class: 'none seek', type: 'button', onclick: () => { if (!film.readyState) film.preload = 'auto'; seek(t); } },
+      h('span', { text: `${lab} ${clock(t)}` }), h('span', { text: '点了在左边成片里看' }));
+  }
+  function inputs(fr, wmf) {
+    const kj = fr && fr.k && F.keys[fr.k];
+    if (!fr) return none('');
+    if (!kj) return none('不是 gpt-image 出的，没有出图的输入');
+    const same = kj.in.filter(x => x.f && x.f === wmf), rest = kj.in.filter(x => !(x.f && x.f === wmf));
+    return h('div', { class: 'insbox' }, same.length ? h('div', { class: 'eq', text: `${same.map(x => x.l.split(' ')[0]).join('、')} = 左边的白模静帧（只给 gpt-image 看）` }) : null,
+      h('div', { class: 'ins fit' }, rest.map(x => fig(x.f, x.l, '', isWm(x.f) ? ['不进视频', 'no'] : null))));
+  }
+  // 哪张图进了视频模型：白模静帧（Blender 灰图）一般只喂给 gpt-image 出彩色关键帧，进视频模型的是关键帧；有的运行把 Blender 图直接当首帧或参考图喂给视频模型
+  const isWm = f => !!f && f.startsWith(`${F.key}/wm/`);
+  const rvName = r => (/previz|(^|\/)wm\//i.test(r) ? '白模预演' : '参考视频') + ' ' + r.split('/').pop();
+  function noFirst(s) {
+    if (F.plan) return '还没开拍，还没有喂给视频模型的帧';
+    if (!s.job) return '没找到这一镜的视频任务';
+    if (s.rv) return '这一镜没有首帧：参考视频喂给视频模型';
+    if (s.refs.length) return '这一镜没有首帧：参考图喂给视频模型';
+    return '这一镜没有首帧：只有文字 prompt';
+  }
+  // ---------- 展示台：一条视频生成（一个 clip）喂进视频模型的是什么、出来的用在哪 ----------
+  // 默认摆两块：
+  //   喂进视频模型的：这条生成发出去的每张图（照发送的次序，图N + 是谁，同一张发了两次也照摆）、首尾帧或参考视频、prompt 全文（图N 点了看那张图）、参数；
+  //   每一镜一行：Blender 白模静帧 → 这一镜用的 gpt-image 关键帧（「这张图怎么来的」收起来）→ 成片这一镜。
+  let shownJob = null;
+  const stemOf2 = f => (f || '').split('/').pop().replace(/\.[^.]+$/, '');
+  // 图从哪来：wm/ 是白模；名字像定妆图、场景图的（ref_、cast、plate…）是参考图；当过首帧尾帧的、放在 keys/ kf…/ 里的是关键帧；其余（refs/ img/ assets/）是参考图
+  const dirOf = f => ((f || '').split('/').slice(1, -1)[0] || '');
+  const refName = f => /^(ref|cast|char|costume|style|look|plate)/i.test(stemOf2(f));
+  let frameSet = null, frameOf = null;      // 这部片当过首帧、尾帧的图：放在 img/ 里也是关键帧
+  const frames = () => { if (frameOf !== F) { frameOf = F; frameSet = new Set(F.shots.flatMap(x => [x.first && x.first.f, x.last && x.last.f]).filter(Boolean)); } return frameSet; };
+  const isKeyImg = (f, k) => !!f && !isWm(f) && !refName(f) && !/^(refs|refs_img|cast)$/.test(dirOf(f)) && (frames().has(f) || !!k || /^(keys|kf\w*)$/.test(dirOf(f)));
+  const keyShot = f => {      // 关键帧是哪一镜的：k_4-1、K1-2a、k_S22_a……对上镜头名
+    if (!isKeyImg(f)) return null;
+    const m = stemOf2(f).match(/^[kK]_?(.+)$/); if (!m) return null;
+    const names = new Set(F.shots.map(x => x.n));
+    return [m[1], m[1].replace(/_?[ab]\d*$/, '')].find(c => names.has(c)) || null;
+  };
+  function roleOf(x, n, vp) {   // 「参考图 · 女孩 全身」「关键帧 · 4-1」「白模 · 1-2_a」：先写从哪来，再写是谁（prompt 里写了就照 prompt，否则 refs/README.md，关键帧看名字）
+    const m = n && (vp || '').match(new RegExp(`(?:图|Image\\s?)${n}\\s*(?:是|为|=|：|:|is)\\s*([^，,。.；;\\n（(、]{1,20})`));
+    const st = stemOf2(x.f), said = m ? m[1].trim() : null;
+    if (isWm(x.f)) return `白模 · ${said || st}`;
+    if (isKeyImg(x.f, x.k)) { const ks = keyShot(x.f); return `关键帧 · ${said || (ks ? ks : st)}`; }
+    if (x.f) return `参考图 · ${said || (F.roles || {})[st] || st}`;
+    return x.l || st;
+  }
+  const clipShots = s => s.job ? F.shots.map((x, k) => [x, k]).filter(([x]) => x.job === s.job) : [[s, F.shots.indexOf(s)]];
+  function keyFor(x, pos, clip, s) {   // 这一镜用的那张关键帧：当首帧的；单元里按参考图里关键帧的次序对上每一镜，对不上就按名字
+    if (x.first && x.first.f && !isWm(x.first.f)) return { f: x.first.f, k: x.first.k };
+    if (x.kref != null && s.refs[x.kref]) return { f: s.refs[x.kref].f, k: s.refs[x.kref].k };   // console.py 对好了（prompt 写的、按次序、按名字）
+    const kr = s.refs.filter(r => isKeyImg(r.f, r.k));
+    const r = kr.length === clip.length ? kr[pos] : kr.find(q => keyShot(q.f) === x.n);
+    return r ? { f: r.f, k: r.k } : null;
+  }
+  function richText(text, at) {   // prompt 全文；图N / Image N 标出来，点了看那张图
+    const out = [], re = /(图\s?(\d+)|Image\s?(\d+))/g; let m, last = 0;
+    while ((m = re.exec(text))) {
+      out.push(text.slice(last, m.index));
+      const k = at[+(m[2] || m[3])];
+      out.push(k != null ? h('a', { class: 'imref', title: '看这张图', onclick: () => zoom(k) }, m[1]) : m[1]);
+      last = re.lastIndex;
+    }
+    out.push(text.slice(last));
+    return out;
+  }
+  function showClip(i) {
+    const s = F.shots[i], clip = clipShots(s), model = s.model || (F.model || '').split(/[（(；;]/)[0].trim();
+    const flagged = F.flag && F.flag.shots.includes(s.n);
+    $('info').replaceChildren(...[
+      h('h2', { text: s.n }), h('span', { class: 't', text: `${clock(s.t0)}–${clock(s.t1)} · 第 ${i + 1}/${F.shots.length} 镜` }),
+      h('span', { class: 'what', text: s.what, title: s.what }),
+      flagged ? h('span', { class: 'badge', text: `${clock(F.flag.t, 0)} 有问题：${F.flag.note}`, title: F.flag.note }) : null,
+      h('div', { class: 'sub', title: s.feed || '' }, s.job ? `这条生成 ${s.job} 用在 ${clip.length} 镜：` : `喂法：${s.feed || '—'}`,
+        ...(s.job ? clip.map(([x, k]) => h('button', { class: 'use' + (k === i ? ' on' : ''), type: 'button', onclick: () => seek(x.t0 + 0.01) },
+          `${x.n} ${clock(x.t0, 0)}–${clock(x.t1, 0)}`)) : []))].filter(Boolean));
+    const id = `${F.key}|${s.job || 'shot:' + s.n}`;
+    if (shownJob === id) { $('pipe').querySelectorAll('[data-i]').forEach(r => r.classList.toggle('cur', +r.dataset.i === i)); return; }
+    shownJob = id; G = [];
+
+    // 喂进视频模型的
+    const at = {}, seen = {}, tiles = [];
+    const sent = (x, lab) => fig(x.f, lab, isWm(x.f) ? 'bl' : 'vin', isWm(x.f) ? ['Blender 图直接进视频模型', 'bl'] : null);
+    if (s.first) tiles.push(sent(s.first, `首帧 · ${roleOf(s.first, 0, '')}`));
+    if (s.last) tiles.push(sent(s.last, `尾帧 · ${roleOf(s.last, 0, '')}`));
+    const picOf = {};      // 参考图里哪张是哪一镜的画面
+    clip.forEach(([x]) => { if (x.kref != null && picOf[x.kref] == null) picOf[x.kref] = x.n; });
+    s.refs.forEach((x, j) => {
+      const n = j + 1, dup = seen[x.f];
+      seen[x.f] = seen[x.f] || n; at[n] = G.length;
+      const role = picOf[j] != null && !isWm(x.f) ? `关键帧 · ${picOf[j]} 的画面` : roleOf(x, n, s.vp);
+      tiles.push(sent(x, `图${n} ${role}${dup ? `（和图${dup} 同一张）` : ''}`));
+    });
+    const params = Object.entries(s.params || { model: s.model, duration: s.dur, seed: s.seed }).filter(([, v]) => v != null && v !== '');
+    const vp = h('div', { class: 'vp' }, ...richText(s.vp || '（没有 prompt）', at));
+    const more = h('button', { class: 'cb-x', type: 'button', onclick: () => { vp.classList.toggle('open'); more.textContent = vp.classList.contains('open') ? '收起' : '展开全文'; } }, '展开全文');
+    $('sent').replaceChildren(...[
+      h('div', { class: 'cb-h' }, h('b', { text: '喂进视频模型的' }), h('span', { class: 'dim', text: [s.job || '', model].filter(Boolean).join(' · ') }),
+        h('span', { class: 'dim', text: [s.first && '首帧', s.last && '尾帧', s.refs.length && `参考图 ${s.refs.length} 张`, s.rv && '参考视频'].filter(Boolean).join(' + ') || noFirst(s) })),
+      tiles.length ? h('div', { class: 'sent' }, tiles) : null,
+      s.rv ? h('div', { class: 'rvl' }, `参考视频：${rvName(s.rv)}`) : null,
+      params.length ? h('div', { class: 'prm' }, params.map(([k, v]) => h('span', { text: `${k} ${v}` }))) : null,
+      s.job ? h('div', { class: 'vpbox' }, vp, more) : null].filter(Boolean));
+
+    // 每一镜：白模静帧 → 这一镜用的 gpt-image 关键帧 → 成片这一镜
+    const hd = t => h('div', { class: 'ch-h', text: t });
+    const rows = [hd(''), hd('Blender 白模静帧 · 只给 gpt-image 看'), hd('这一镜用的 gpt-image 关键帧'), hd('成片这一镜')];
+    clip.forEach(([x, k], pos) => {
+      const kf = keyFor(x, pos, clip, s);
+      const inFed = kf && (s.first && s.first.f === kf.f ? '首帧' : s.last && s.last.f === kf.f ? '尾帧' : (n => n ? `图${n}` : '')(s.refs.findIndex(r => r.f === kf.f) + 1));
+      const ks = kf && keyShot(kf.f), reuse = ks && ks !== x.n;
+      const kcell = kf ? [fig(kf.f, `${reuse ? `沿用 ${ks} 的关键帧` : '关键帧'} ${stemOf2(kf.f)}`, inFed ? 'vin' : '', inFed ? [`进视频模型 · ${inFed}`, ''] : null)] : [none(F.plan ? '还没开拍' : x.first ? '首帧不是 gpt-image 出的' : '这一镜没有关键帧')];
+      const KJ = kf && kf.k && F.keys[kf.k];
+      if (KJ) kcell.push(h('details', { class: 'mk' }, h('summary', { text: '这张图怎么来的' }),
+        h('div', { class: 'mk-in' }, KJ.in.map(q => fig(q.f, q.l, '', isWm(q.f) ? ['白模 · 只给 gpt-image', 'no'] : null))),
+        h('div', { class: 'mk-p', text: KJ.prompt || '（没有出图 prompt）' })));
+      const wd = x.wm[0] && vin(x).includes(x.wm[0]);
+      rows.push(h('div', { class: 'ch-n', 'data-i': k }, h('button', { class: 'use' + (k === i ? ' on' : ''), type: 'button', onclick: () => seek(x.t0 + 0.01) }, x.n),
+          h('small', { text: `${clock(x.t0, 0)}–${clock(x.t1, 0)}` })),
+        h('div', { class: 'ch-c', 'data-i': k }, x.wm[0] ? fig(x.wm[0], `白模 ${x.n}`, wd ? 'bl' : '', wd ? ['Blender 图直接进视频模型', 'bl'] : ['不进视频', 'no']) : none('这一镜没有白模')),
+        h('div', { class: 'ch-c', 'data-i': k }, kcell),
+        h('div', { class: 'ch-c', 'data-i': k }, x.film[1] ? fig(x.film[1], `成片 ${x.n} ${clock((x.t0 + x.t1) / 2)}`) : filmCell(null, (x.t0 + x.t1) / 2, x.n)));
+    });
+    $('pipe').className = 'chain';
+    $('pipe').replaceChildren(...rows);
+    $('pipe').querySelectorAll('[data-i]').forEach(r => r.classList.toggle('cur', +r.dataset.i === i));
+    $('prompts').replaceChildren();
+  }
+  const vin = s => [s.first, s.last, ...s.refs].filter(x => x && x.f).map(x => x.f);
+  // 出关键帧用的图：按格子的宽高挑行数，让小图尽量大
+  function fitTiles() {
+    document.querySelectorAll('#pipe .ins.fit').forEach(box => {
+      const n = box.children.length; if (!n) return;
+      const W = box.clientWidth, H = box.clientHeight, g = 4; let best = 0;
+      for (let r = 1; r <= n; r++) { const c = Math.ceil(n / r); best = Math.max(best, Math.min((H - (r - 1) * g) / r, (W - (c - 1) * g) / c * 9 / 16)); }
+      box.style.setProperty('--th', `${Math.floor(best)}px`);
+    });
+  }
+  // 一屏放下：左栏两段视频、右栏三行图，再加底下的时间线
+  function size() {
+    graphSize();
+    const st = $('console').style, vw = Math.min(innerWidth, 1600), vh = innerHeight;   // 设在 #console 上：嵌进别的页面也管用
+    if (innerWidth <= 1000) { st.removeProperty('--lw'); st.setProperty('--rh', '90px'); fitTiles(); return; }
+    // 量顶栏和时间线的实际高度（顶栏按钮多了会折行），左栏两段视频按剩下的高度定宽，右栏在剩下的高度里自己滚
+    const box = $('console').getBoundingClientRect(), strip = $('console').querySelector('.strip').getBoundingClientRect();
+    const avail = vh - (strip.bottom - box.top) - 12 - 26 - track.closest('.tl').offsetHeight - 16;
+    const lwFit = ($('pvbox').hidden ? avail - 30 : (avail - 64) / 2) * 16 / 9;
+    const lw = Math.max(300, Math.min(0.32 * vw, lwFit, 560));
+    const W = vw - 32 - 30 - lw - 16;
+    st.setProperty('--lw', `${Math.round(lw)}px`);
+    st.setProperty('--rh', `${Math.round(Math.max(76, Math.min((0.7 * W - 90) / (3 * 16 / 9), (vh - 440) / 3, 150)))}px`);
+    st.setProperty('--rmax', `${Math.max(240, Math.round(avail))}px`);
+    fitTiles();
+  }
+  addEventListener('resize', () => F && size());
+
+  function show(i) {
+    cur = i; const s = F.shots[i];
+    bars.forEach((b, k) => b.classList.toggle('live', k === i));
+    G = [];
+    if (film.readyState === 0) film.poster = U(s.film[1]) || (F.plan && U(s.th)) || '';
+    if (F.previz && previz.readyState === 0) previz.poster = U(s.wm[0]) || '';
+    if (view === 'graph') return graphShow(i);
+    showClip(i);
+  }
+
+  // ---------- 放大：左右翻这一镜的图 ----------
+  const lb = $('lb'); let zi = 0;
+  function zoom(k) { zi = k; paint(); if (!lb.open) lb.showModal(); }
+  function paint() {
+    const g = G[zi]; $('lb-i').src = g.src; $('lb-t').textContent = g.label; $('lb-n').textContent = `${zi + 1} / ${G.length}`;
+    $('lb-b').classList.remove('full');
+  }
+  $('lb-i').onclick = () => $('lb-b').classList.toggle('full');
+  $('lb-x').onclick = () => lb.close();
+  lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
+
+  document.addEventListener('keydown', e => {
+    if (lb.open) {
+      if (e.key === 'ArrowRight') { zi = (zi + 1) % G.length; paint(); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { zi = (zi - 1 + G.length) % G.length; paint(); e.preventDefault(); }
+      return;
+    }
+    if (!F || $('console').hidden) return;
+    if (e.key === 'ArrowRight') { $('next').click(); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { $('prev').click(); e.preventDefault(); }
+    else if (e.key === ' ' && !e.target.closest('button,video,input,textarea')) { $('play').click(); e.preventDefault(); }
+  });
+
+  // ======== 节点图 ========
+  // 一镜一张 ComfyUI 式的图，照这一镜嵌进去的那份工作流画（console.py 读 ../comfyui/scripts/shots2comfy.py 写出的文件，放在 F.graph.wfz）：
+  // 节点的位置、大小、标题、颜色、口，外面的框和它的标题，线过拐点画成直线；图按 F.graph.media 放，视频节点里放成片的这一镜，
+  // 放到这一镜末尾就回到开头。「导出 ComfyUI」下载的就是这一份原文，和 ComfyUI 工作流目录里的文件一个字节不差。
+  // 页面另加的两样：重抽、重画在节点标题栏右头一个虚线小圈「↻ ×N」（标题上也写了几次），点开看每一次（F.graph 的 takes）；
+  // 时间线下面按阶段分三行。
+  let view = 'console';
+  const GV = { s: 1, x: 0, y: 0, i: -1, wf: null, box: null, pin: null };
+  const canvas = $('gv-canvas'), world = $('gv-world'), dyn = $('gv-dyn'), svg = $('gv-links');
+  const TITLE = 30, ROW = 20, WIDGET = 24, PROMPT = { key: 112, job: 132 };   // 和 shots2comfy 的 size_of 一样：标题栏、口一行、控件一行、提示词框
+  const LINK = { IMAGE: '#64b5f6', VIDEO: '#9a9' };                            // ComfyUI 深色主题里线的颜色
+  const ZH = { prompt: 'prompt', first_frame: '首帧', last_frame: '尾帧', reference_images: '参考图', images: '出图用的图', duration: '时长',
+    seed: 'seed', model: '模型', resolution: '分辨率', ratio: '比例' };
+  const stemOf = r => (r || '').split('/').pop().replace(/\.[^.]+$/, '');
+  const flagged = s => !!(F.flag && F.flag.shots && F.flag.shots.includes(s.n));
+
+  // 各镜的工作流：第一次打开节点图时把 F.graph.wfz 解开（JSON → gzip → base64），每一项 [文件名, 工作流原文]
+  const wfCache = new WeakMap();
+  function workflows() {
+    if (!wfCache.has(F)) wfCache.set(F, (async wfz => {
+      const bin = Uint8Array.from(atob(wfz), c => c.charCodeAt(0));
+      const text = await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+      return JSON.parse(text).map(([name, raw]) => ({ name, raw, wf: JSON.parse(raw) }));
+    })(F.graph.wfz));
+    return wfCache.get(F);
+  }
+
+  // ---------- 画一个节点：照工作流里的 pos、size（不算标题栏）、color、bgcolor、title、口和 widgets ----------
+  const kindOf = n => n.type === 'FilmKitImage' ? 'img' : n.type === 'FilmKitKeyframe' ? 'key' : n.type === 'LoadVideo' ? 'rv'
+    : /^FilmKit(T2V|I2V|FLF2V|R2V)$/.test(n.type) ? 'job' : 'other';
+  const shownIns = n => (n.inputs || []).filter(x => x.link != null);      // 没接线的可选口在 ComfyUI 里收起来了，这里也不画
+  const rowsOf = n => Math.max(shownIns(n).length, (n.outputs || []).length, 1);
+  const takesOf = n => { const f = (n.properties || {}).filmkit || {}, D = F.graph;
+    if (kindOf(n) === 'job') return ((D.job || {})[f.job] || {}).takes || [];
+    if (kindOf(n) === 'key') return ((D.key || {})[stemOf(f.file)] || {}).takes || [];
+    return []; };
+  function nodeEl(n) {
+    const k = kindOf(n), [x, y] = n.pos, [w, hh] = n.size, rows = rowsOf(n), W = n.widgets_values || [], f = (n.properties || {}).filmkit || {};
+    const T = takesOf(n), bad = T.some(t => t.st === 'failed');
+    const el = h('div', { class: `cn cn-${k}`, 'data-state': 'done',
+      style: `left:${x}px;top:${y - TITLE}px;width:${w}px;height:${hh + TITLE}px;--tc:${n.color || '#222'};--bg:${n.bgcolor || '#353535'}` },
+      h('div', { class: 'cn-t', title: n.title }, h('span', { text: n.title }),
+        T.length > 1 ? h('button', { class: 'cn-x' + (bad ? ' bad' : ''), type: 'button', text: `↻ ×${T.length}`, 'aria-label': `${k === 'job' ? '重抽' : '重画'} ${T.length} 次，点开看每一次`,
+          onclick: e => { e.stopPropagation(); showPop(n, e.currentTarget, true); }, onpointerenter: e => showPop(n, e.currentTarget, false),
+          onpointerleave: () => { if (!GV.pin) hidePop(); } }) : null));
+    shownIns(n).forEach((p, r) => el.append(h('span', { class: 'cn-i', style: `top:${TITLE + r * ROW}px;--lc:${LINK[p.type] || '#9a9'}`, text: p.label || p.name })));
+    (n.outputs || []).forEach((o, r) => el.append(h('span', { class: 'cn-o' + (o.links && o.links.length ? ' on' : ''),
+      style: `top:${TITLE + r * ROW}px;--lc:${LINK[o.type] || '#9a9'}`, text: o.label || o.name })));
+    let top = TITLE + rows * ROW + 6;                                         // 第一个控件从「口数 × 20 + 6」开始
+    const pill = (name, val) => { el.append(h('div', { class: 'cn-w', style: `top:${top + 2}px` }, h('span', { text: name }), h('b', { text: String(val) }))); top += WIDGET; };
+    const prompt = (text, ht, who) => {                                         // 提示词：框里露前几行，点了看全文
+      el.append(h('div', { class: 'cn-p', style: `top:${top}px;height:${ht - 6}px`, title: '点了看全文', text: text || '（没有提示词）',
+        onclick: e => { e.stopPropagation(); showText(who, text || '（没有提示词）', e.currentTarget); } }));
+      top += ht; };
+    if (k === 'key') prompt(W[0], PROMPT.key, `${n.title} 的出图提示词`);
+    if (k === 'job') { pill('model', W[0] || '—'); prompt(W[1], PROMPT.job, `${n.title} 的提示词`); pill('duration', W[2] != null ? W[2] : '—'); }
+    const mh = hh + TITLE - top - 8;                                          // 图、视频占剩下的（底下留 8）
+    if (k === 'img' || k === 'key') {
+      const src = (F.graph.media || {})[f.file];
+      el.append(h('div', { class: 'cn-m', style: `top:${top}px;height:${mh}px;padding:6px 0` }, h('div', { style: 'height:100%' }, fig(src, n.title))));
+    } else if (k === 'rv') {
+      el.append(h('div', { class: 'cn-m', style: `top:${top}px;height:${mh}px` }, h('div', { class: 'none', text: `参考视频 ${stemOf(f.file)}（页面里不放）` })));
+    } else if (k === 'job') {
+      GV.vrect = [x + 6, y - TITLE + top + 6, w - 12, mh - 12];             // 成片这一镜放在这里（常驻的 <video>，不跟着换镜重建）
+    }
+    return el;
+  }
+
+  // ---------- 画一镜 ----------
+  async function graphShow(i, refit = true) {
+    if (!F || !F.graph || !F.graph.wfz) return;
+    if (GV.i !== i) { GV.i = i; hidePop(); }
+    lanesLive(i);
+    const Fi = F, list = await workflows();
+    if (F !== Fi || cur !== i || view !== 'graph') return;                    // 解压的时候换了镜、换了片
+    GV.wf = list[i];
+    paintWf(GV.wf.wf, F.shots[i]);
+    if (refit) fit();
+  }
+  function paintWf(wf, s) {
+    G = []; GV.vrect = null;
+    const nodes = wf.nodes, byId = new Map(nodes.map(n => [n.id, n]));
+    dyn.replaceChildren(...nodes.map(nodeEl));
+    // 外面的框：标题就是这一镜
+    const g = (wf.groups || [])[0];
+    const extra = [];
+    if (g) {
+      const [x, y, w, hh] = g.bounding;
+      extra.push(h('div', { class: 'cg', style: `left:${x}px;top:${y}px;width:${w}px;height:${hh}px` }, h('b', { style: `font-size:${g.font_size || 24}px`, text: g.title })));
+    }
+    // 线：出口 → 拐点（顺 parentId 从终点往起点倒着连，再反过来）→ 入口，直线
+    const R = new Map(((wf.extra || {}).reroutes || []).map(r => [r.id, r]));
+    const last = new Map(((wf.extra || {}).linkExtensions || []).map(e => [e.id, e.parentId]));
+    const outAt = (n, k) => [n.pos[0] + n.size[0] - 8, n.pos[1] + k * ROW + ROW / 2];
+    const inAt = (n, k) => [n.pos[0] + 8, n.pos[1] + n.inputs.slice(0, k).filter(x => x.link != null).length * ROW + ROW / 2];
+    const NS = 'http://www.w3.org/2000/svg', shapes = [], dots = [];
+    for (const L of wf.links || []) {
+      const a = byId.get(L[1]), b = byId.get(L[3]); if (!a || !b) continue;
+      const via = []; let r = last.get(L[0]);
+      while (r != null && R.has(r)) { via.push(R.get(r).pos); r = R.get(r).parentId; }
+      const pts = [outAt(a, L[2]), ...via.reverse(), inAt(b, L[4])];
+      const pl = document.createElementNS(NS, 'polyline');
+      pl.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+      pl.style.stroke = LINK[L[5]] || '#9a9';
+      shapes.push(pl);
+    }
+    for (const r of R.values()) {
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', r.pos[0]); c.setAttribute('cy', r.pos[1]); c.setAttribute('r', 4.5); c.style.fill = '#9cc9ee';
+      dots.push(c);
+    }
+    svg.replaceChildren(...shapes, ...dots);
+    world.querySelectorAll('.cg').forEach(e => e.remove());
+    world.prepend(...extra);
+    // 视频节点里放成片的这一镜：常驻的那个 <video> 挪到位
+    const vb = vbox();
+    vb.hidden = !GV.vrect;
+    if (GV.vrect) { const [x, y, w, hh] = GV.vrect; vb.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${hh}px`; }
+    GV.box = g ? g.bounding : boxOf(nodes);
+    // 左上：有问题的那一镜写那一句
+    $('gv-flag').replaceChildren(...(flagged(s) ? [h('span', { class: 'badge', text: `${clock(F.flag.t, 0)} 有问题：${F.flag.note}`, title: F.flag.note })] : []));
+  }
+  const boxOf = nodes => { const xs = nodes.flatMap(n => [n.pos[0], n.pos[0] + n.size[0]]), ys = nodes.flatMap(n => [n.pos[1] - TITLE, n.pos[1] + n.size[1]]);
+    return [Math.min(...xs), Math.min(...ys), Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)]; };
+  let vb = null;
+  function vbox() { if (!vb) { vb = h('div', { class: 'cn-v' }); world.append(vb); } return vb; }
+  function placeVideos(on) {   // 进节点图：成片搬进视频节点；回展示台：搬回左栏。白模预演留在展示台
+    if (on) vbox().append(film);
+    else slot.append(film);
+  }
+  // 节点图里成片只放这一镜：放到这一镜末尾就回到开头（拖动、点别的镜头时 film.seeking 是 true，不管）
+  function loopShot() {
+    if (cur < 0 || !film || film.paused || film.seeking) return;
+    const s = F.shots[cur];
+    if (T >= s.t1 - 0.04 && T < s.t1 + 0.6) { T = s.t0 + 0.01; film.currentTime = T; }
+  }
+
+  // ---------- 重抽、重画的每一次；提示词全文 ----------
+  function showPop(n, anchor, pin) {
+    const T = takesOf(n), job = kindOf(n) === 'job', p = $('gv-pop'), used = T.find(t => t.used);
+    if (GV.pin && !pin) return;
+    GV.pin = pin ? n.id : null;
+    const what = t => t.used ? '' : !t.diff.length ? '输入一样' : t.diff.every(d => d === 'seed') ? '只换了 seed' : `改了 ${t.diff.map(d => ZH[d] || d).join('、')}`;
+    p.className = 'gv-pop';
+    p.replaceChildren(h('b', { text: `${job ? '重抽' : '重画'} ×${T.length} · 节点上是用上的 ${used ? used.n : '—'}` }),
+      h('table', {}, T.map(t => h('tr', {}, h('td', { text: t.n }),
+        h('td', { class: t.used ? 'use' : 'no', text: t.used ? '用上' : '没用上' }),
+        h('td', { class: t.st === 'failed' ? 'err' : '', title: t.err || null, text: t.st === 'failed' ? `报错：${errShort(t.err)}` : t.st ? (t.seed != null ? `seed ${t.seed}` : '出了') : '没有记录' }),
+        h('td', { class: 'dim', text: what(t) })))),
+      pin ? h('div', { class: 'dim', style: 'margin-top:4px;font-size:12px', text: '点空白处关上' }) : null);
+    place(p, anchor);
+  }
+  function showText(title, text, anchor) {
+    const p = $('gv-pop');
+    GV.pin = 'text';
+    p.className = 'gv-pop txt';
+    p.replaceChildren(h('b', { style: 'font-family:inherit', text: title }), text, h('div', { class: 'dim', style: 'margin-top:6px;font-size:12px', text: '点空白处关上' }));
+    place(p, anchor);
+  }
+  function place(p, anchor) {
+    p.hidden = false; p.scrollTop = 0;
+    const r = anchor.getBoundingClientRect(), c = canvas.getBoundingClientRect();
+    p.style.left = `${Math.max(4, Math.min(r.left - c.left - 20, c.width - p.offsetWidth - 4))}px`;
+    p.style.top = `${r.bottom - c.top + 6 + p.offsetHeight > c.height ? Math.max(4, r.top - c.top - p.offsetHeight - 6) : r.bottom - c.top + 6}px`;
+  }
+  function hidePop() { $('gv-pop').hidden = true; GV.pin = null; }
+  const errShort = e => { if (!e) return '没写原因'; const code = /code=(\w+)/.exec(e); return e.split(/[:：\s]/)[0] + (code ? `（${code[1]}）` : ''); };
+
+  // ---------- 平移、缩放：默认适应窗口（最大 100%，和 ComfyUI 打开时一样）；拖动平移，滚轮或两指缩放，按钮 + − ----------
+  function apply() {
+    world.style.transform = `translate(${GV.x}px,${GV.y}px) scale(${GV.s})`;
+    canvas.style.setProperty('--dot', `${20 * GV.s}px`);
+    canvas.style.setProperty('--dotx', `${GV.x}px`); canvas.style.setProperty('--doty', `${GV.y}px`);
+  }
+  // 画布顶上一条留给图例、有问题的那一句和按钮（量它们实际多高），适应窗口时整镜摆在它下面，不被盖住；窄屏上按钮换到第二行
+  const band = () => Math.max(...[...canvas.querySelectorAll('.gv-tl,.gv-tr')].map(e => e.offsetTop + e.offsetHeight)) + 6;
+  function fit() {
+    const b = GV.box; if (!b) return;
+    const BAND = band(), [x0, y0, bw, bh] = b, W = canvas.clientWidth, H = canvas.clientHeight - BAND, m = 8;
+    GV.s = Math.max(0.12, Math.min(1, (W - 2 * m) / bw, (H - m) / bh));
+    if (W < 700) GV.s = Math.max(GV.s, Math.min(0.62, (H - m) / bh));   // 窄屏：按高度放，从左边开始看，横着拖
+    GV.x = W < 700 && bw * GV.s > W ? m - x0 * GV.s : (W - bw * GV.s) / 2 - x0 * GV.s;
+    GV.y = BAND + (H - bh * GV.s) / 2 - y0 * GV.s;
+    apply();
+  }
+  function zoomAt(k, cx, cy) {
+    const s = Math.max(0.12, Math.min(3, GV.s * k));
+    GV.x = cx - (cx - GV.x) * s / GV.s; GV.y = cy - (cy - GV.y) * s / GV.s; GV.s = s;
+    apply();
+  }
+  canvas.addEventListener('wheel', e => {
+    if (e.target.closest('.gv-pop')) return;
+    e.preventDefault();
+    const r = canvas.getBoundingClientRect();
+    zoomAt(Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)), e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+  const pts = new Map(); let pan = null;
+  canvas.addEventListener('pointerdown', e => {   // 只在真拖起来以后才抓住指针：没拖动的点击照常落到图、按钮上
+    if (e.button > 0 || e.target.closest('video,button,.gv-pop')) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    pan = { moved: false, x: GV.x, y: GV.y, s: GV.s, ...pinch() };
+  });
+  function pinch() {   // 两指：中点和距离
+    const p = [...pts.values()];
+    if (p.length < 2) return { cx: p[0] ? p[0].x : 0, cy: p[0] ? p[0].y : 0, d: 0 };
+    return { cx: (p[0].x + p[1].x) / 2, cy: (p[0].y + p[1].y) / 2, d: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) };
+  }
+  canvas.addEventListener('pointermove', e => {
+    if (!pan || !pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const q = pinch(), r = canvas.getBoundingClientRect();
+    if (!pan.moved && (Math.hypot(q.cx - pan.cx, q.cy - pan.cy) > 4 || (pan.d && Math.abs(q.d - pan.d) > 4))) {
+      pan.moved = true; canvas.classList.add('pan');
+      for (const id of pts.keys()) try { canvas.setPointerCapture(id); } catch (_) { /* 指针已经抬起 */ }
+    }
+    if (!pan.moved) return;
+    GV.s = pan.s; GV.x = pan.x + q.cx - pan.cx; GV.y = pan.y + q.cy - pan.cy;
+    if (pan.d && q.d) zoomAt(q.d / pan.d, q.cx - r.left, q.cy - r.top); else apply();
+  });
+  const endPan = e => {
+    pts.delete(e.pointerId);
+    if (pan && pan.moved) { canvas.dataset.dragged = '1'; setTimeout(() => { delete canvas.dataset.dragged; }, 0); }
+    pan = pts.size ? { moved: true, x: GV.x, y: GV.y, s: GV.s, ...pinch() } : null;
+    if (!pan) canvas.classList.remove('pan');
+  };
+  canvas.addEventListener('pointerup', endPan); canvas.addEventListener('pointercancel', endPan);
+  canvas.addEventListener('click', e => {   // 拖过就不算点（不放大图、不开提示词）
+    if (canvas.dataset.dragged) { e.stopPropagation(); e.preventDefault(); return; }
+    if (GV.pin && !e.target.closest('.gv-pop,.cn-x,.cn-p')) hidePop();
+  }, true);
+  $('gv-fit').onclick = () => fit();
+  $('gv-in').onclick = () => zoomAt(1.25, canvas.clientWidth / 2, canvas.clientHeight / 2);
+  $('gv-out').onclick = () => zoomAt(0.8, canvas.clientWidth / 2, canvas.clientHeight / 2);
+  new ResizeObserver(() => { if (view === 'graph' && GV.wf && canvas.clientWidth) fit(); }).observe(canvas);
+
+  // ---------- 导出 ComfyUI：下载这一镜嵌进去的那份工作流，原文原样；文件名「镜头名 拍什么.json」 ----------
+  $('gv-export').onclick = async () => {
+    const item = (await workflows())[cur];
+    const a = h('a', { href: URL.createObjectURL(new Blob([item.raw], { type: 'application/json' })), download: item.name });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  };
+
+  // ---------- 时间线下面按阶段分三行：白模接没接上、往上几张关键帧、视频重抽几次；一行一个阶段横跨全片 ----------
+  function chainOf(i) {   // 这一镜视频任务往上的整条关键帧链（只给这三行用；节点图只放必要的那一层）
+    const D = F.graph, s = F.shots[i], J = s.job && (D.job || {})[s.job], keys = new Map(), rels = new Set(), q = [];
+    const push = (rel, d) => { rels.add(rel); const k = rel.startsWith('keys/') && D.key[stemOf(rel)] ? stemOf(rel) : null;
+      if (k && !keys.has(k)) { keys.set(k, d); q.push([k, d]); } };
+    if (J) [J.first, J.last, ...(J.refs || [])].filter(Boolean).forEach(r => push(r, 1));
+    while (q.length) { const [k, d] = q.shift(); D.key[k].ins.forEach(r => push(r, d + 1)); }
+    return { J, keys, rels };
+  }
+  let lanes = [];
+  function lanesBuild() {
+    const box = $('lanes');
+    lanes = [];
+    if (!F.graph || !F.graph.key) { box.replaceChildren(); return; }
+    const D = F.seconds, rows = [['白模', []], ['关键帧', []], ['生成', []]];
+    F.shots.forEach((s, i) => {
+      const { J, keys, rels } = chainOf(i), T = (J && J.takes) || [];
+      const own = ((F.graph.shot[i] || {}).wm || []).filter(Boolean), fedOwn = own.filter(r => rels.has(r));
+      const redraw = [...keys.keys()].filter(k => ((F.graph.key[k] || {}).takes || []).length > 1);
+      const pos = `left:${s.t0 / D * 100}%;width:calc(${(s.t1 - s.t0) / D * 100}% - 2px)`;
+      const deep = Math.max(0, ...keys.values());
+      const cells = [
+        own.length ? h('span', { class: 'lc wm' + (fedOwn.length ? '' : ' off'), style: pos, 'data-i': i,
+          'data-tip': fedOwn.length ? '白模喂进了关键帧' : '有白模静帧，没喂进去（节点图里不画）' }) : null,
+        keys.size ? h('span', { class: 'lc k', style: `${pos};--a:${(0.18 + 0.62 * Math.min(keys.size, 10) / 10).toFixed(2)}`, 'data-i': i, 'data-n': keys.size,
+          'data-tip': `往上 ${keys.size} 张关键帧、${deep} 层（节点图里只放这一镜的那一层）${redraw.length ? `；重画 ${redraw.map(k => `${k} ×${F.graph.key[k].takes.length}`).join('、')}` : ''}` }) : null,
+        J ? h('span', { class: 'lc g' + (T.length > 1 ? ' x' : '') + (T.some(t => t.st === 'failed') ? ' bad' : ''), style: pos, 'data-i': i, 'data-n': T.length > 1 ? `×${T.length}` : '',
+          'data-tip': T.length > 1 ? `${s.job} ×${T.length}：${T.filter(t => !t.used).map(t => t.n + (t.st === 'failed' ? ' 报错' : ' 没用上')).join('、')}` : `${s.job} 一次就用上` }) : null];
+      cells.forEach((c, r) => { if (c) rows[r][1].push(c); });
+      lanes.push(cells);
+    });
+    box.replaceChildren(...rows.map(([t, cs]) => h('div', { class: 'lane' }, h('b', { text: t }), cs)));
+    requestAnimationFrame(laneText);
+  }
+  function laneText() { lanes.flat().forEach(c => { if (c && c.dataset.n) c.textContent = c.offsetWidth >= (c.dataset.n.length * 5 + 4) ? c.dataset.n : ''; }); }
+  new ResizeObserver(() => { if (view === 'graph' && F && F.graph) laneText(); }).observe($('lanes'));
+  $('lanes').addEventListener('click', e => { const c = e.target.closest('.lc'); if (c) seek(F.shots[+c.dataset.i].t0 + 0.01); });
+  $('lanes').addEventListener('pointermove', e => {
+    const c = e.target.closest('.lc'); if (!c) { $('peek').hidden = true; return; }
+    peek(e.clientX);
+    const p = $('peek').lastElementChild; p.textContent = `${p.textContent} · ${c.dataset.tip}`;
+  });
+  $('lanes').addEventListener('pointerleave', () => { $('peek').hidden = true; });
+  function lanesLive(i) { lanes.forEach((cells, k) => cells.forEach(c => c && c.classList.toggle('live', k === i))); }
+
+  // ---------- 两个视图：展示台、节点图；共用底下的时间线和成片 ----------
+  function setView(v) {
+    if (!F) return;
+    if (v === 'graph' && !(F.graph && F.graph.wfz)) v = 'console';
+    const was = view; view = v;
+    $('views').querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+    document.querySelector('#console .main').hidden = v === 'graph';
+    $('gv').hidden = v !== 'graph';
+    $('console').classList.toggle('gview', v === 'graph');
+    track.closest('.tl').classList.toggle('wl', v === 'graph');
+    $('lanes').hidden = v !== 'graph';
+    hidePop();
+    if (v === 'graph') previz.pause();
+    if (was !== v || v === 'graph') placeVideos(v === 'graph');
+    size();
+    if (cur >= 0) { const i = cur; cur = -1; shownJob = null; show(i); }
+    if (v === 'graph') { lanesLive(cur); laneText(); }
+  }
+  $('views').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) setView(b.dataset.v); });
+  function graphOpen() {   // 换片：节点图的状态清空，时间线下面的几行按这部片重建
+    GV.i = -1; GV.wf = null; GV.box = null;
+    $('views').hidden = !(F.graph && F.graph.wfz);
+    lanesBuild();
+    view = '';
+    setView(opt.view || DATA.view || 'console');
+  }
+  function graphSize() {   // 一屏放下：顶栏、节点图、时间线都在
+    if (view !== 'graph') return;
+    const top = canvas.getBoundingClientRect().top + scrollY, tl = track.closest('.tl').offsetHeight;
+    const hgt = innerWidth <= 1000 ? Math.max(300, Math.min(innerHeight * 0.55, 520)) : Math.max(300, innerHeight - top - tl - 6 - 2 - 6);
+    canvas.style.setProperty('--gvh', `${Math.round(hgt)}px`);
+  }
+
+  return { open, close, isOpen: () => !!F };
+};
+/*/lib*/
+
+// ---------- 单独一页：首页一部片一张卡，打开在有问题的那一镜 ----------
+(function () {
+  'use strict';
+  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const M = {};
+  document.querySelectorAll('#media [data-k]').forEach(e => { M[e.dataset.k] = e.dataset.src; });
+  const $ = id => document.getElementById(id);
+  const C = window.FilmConsole(DATA, M, { onBack: () => { $('console').hidden = true; $('home').hidden = false; window.scrollTo(0, 0); } });
+  const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+  $('home-title').textContent = DATA.title;
+  document.title = DATA.title;
+  DATA.films.forEach((F, k) => {
+    const n = F.flag && F.flag.shots && F.flag.shots[0], s = F.shots[Math.max(0, F.shots.findIndex(x => x.n === n))];
+    const card = document.createElement('button'); card.className = 'fcard'; card.type = 'button'; card.onclick = () => C.open(k);
+    const img = document.createElement('img'); img.src = M[s.film[1]] || ''; img.alt = F.title; img.loading = 'lazy';
+    const box = document.createElement('div'), b = document.createElement('b'), d = document.createElement('div');
+    b.textContent = `《${F.title}》`; d.className = 'dim'; d.textContent = `${F.genre} · ${clock(F.seconds)} · ${F.shots.length} 镜`;
+    box.append(b, d);
+    if (F.flag) { const f = document.createElement('div'); f.className = 'fl'; f.textContent = `${clock(F.flag.t)} · ${F.flag.shots.join('–')} · ${F.flag.note}`; box.append(f); }
+    card.append(img, box); $('films').append(card);
+  });
+})();
+</script>
+</body>
+</html>

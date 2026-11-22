@@ -1,0 +1,147 @@
+/* 暖心进度页：摊在桌上的拍片手账。每一次生成是一张贴着胶带的照片。颜色、字体在 tokens.css。 */
+:root[data-style="warm"] body{background-color:var(--w-desk);color:var(--w-ink);font:14px/1.6 var(--w-font);min-height:100vh;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .26 0 0 0 0 .2 0 0 0 0 .16 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-style="warm"] main{max-width:1500px;padding:22px 22px 70px}
+:root[data-style="warm"] .ok{--c:var(--w-ok)}
+:root[data-style="warm"] .warn{--c:var(--w-warn)}
+:root[data-style="warm"] .run{--c:var(--w-run)}
+:root[data-style="warm"] .bad{--c:var(--w-bad)}
+:root[data-style="warm"] .idle{--c:var(--w-idle)}
+:root[data-style="warm"] h1{font:600 30px/1.3 var(--w-hand);margin:0;padding:0 4px 9px 2px;width:fit-content;color:var(--w-ink);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5c20-4 38 3 58 0s38-3 58 1' stroke='%23d9744f' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") left bottom/100% 8px no-repeat}
+:root[data-style="warm"] h2{font:600 20px/1.4 var(--w-hand);margin:26px 0 4px;padding:0 8px;width:fit-content;color:var(--w-ink);
+  background:linear-gradient(transparent 56%,var(--w-yellow) 56% 92%,transparent 92%)}
+:root[data-style="warm"] .meta{color:var(--w-dim)}
+:root[data-style="warm"] small{color:var(--w-dim);font-weight:400}
+:root[data-style="warm"] .fs-switch{color:var(--w-ink2)}
+
+/* 小人说的那一句 */
+:root[data-style="warm"] .fx-hi{display:flex;align-items:flex-end;gap:8px;margin:12px 0 0}
+:root[data-style="warm"] .fx-man{flex:none;line-height:0}
+:root[data-style="warm"] .fx-man .fx-wave{transform-origin:43px 37px;animation:warm-wave 3.2s ease-in-out infinite}
+@keyframes warm-wave{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(-12deg)}80%{transform:rotate(6deg)}90%{transform:rotate(-8deg)}}
+:root[data-style="warm"] .fx-say{position:relative;min-width:0;background:var(--w-card);border:2px solid var(--w-ink);border-radius:255px 18px 225px 18px/18px 225px 18px 255px;padding:9px 20px 8px 18px;margin-bottom:20px;
+  box-shadow:2px 3px 0 rgba(67,52,42,.14)}
+:root[data-style="warm"] .fx-say::before{content:"";position:absolute;left:-8px;bottom:15px;width:12px;height:12px;background:var(--w-card);border-left:2px solid var(--w-ink);border-bottom:2px solid var(--w-ink);transform:rotate(45deg)}
+:root[data-style="warm"] .fx-say b{display:block;font:600 19px/1.45 var(--w-hand);color:var(--w-ink)}
+:root[data-style="warm"] .fx-say span{display:block;font-size:12.5px;color:var(--w-dim)}
+
+/* 故事：一张横线卡片；现在：一张便签 */
+:root[data-style="warm"] .story{position:relative;background-color:var(--w-card);border:0;border-radius:3px;box-shadow:var(--w-shadow);padding:10px 22px 14px 46px;margin:14px 0 0;transform:rotate(-.3deg);
+  background-image:linear-gradient(90deg,transparent 33px,#efb6ad 33px 34.5px,transparent 34.5px),repeating-linear-gradient(transparent 0 25px,#eadfca 25px 26px);background-position:0 0,0 10px}
+:root[data-style="warm"] .story summary{font:600 16px/26px var(--w-hand);color:var(--w-accent);list-style:none;cursor:pointer}
+:root[data-style="warm"] .story summary::-webkit-details-marker{display:none}
+:root[data-style="warm"] .story div{font-size:14px;line-height:26px;color:var(--w-ink);max-height:none;margin-top:0}
+:root[data-style="warm"] .now{position:relative;background:var(--w-yellow);border:0;border-radius:2px 2px 2px 26px/2px 2px 2px 10px;padding:17px 20px 12px;margin:14px 0 0;transform:rotate(.6deg);
+  box-shadow:0 1px 1px rgba(67,52,42,.1),3px 9px 16px rgba(67,52,42,.16)}
+:root[data-style="warm"] .now::before{content:"";position:absolute;top:-10px;left:50%;width:96px;height:21px;margin-left:-48px;transform:rotate(-2deg);
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.62) 0 7px,rgba(255,255,255,.4) 7px 14px);box-shadow:0 1px 2px rgba(67,52,42,.16)}
+:root[data-style="warm"] .now>b{font:600 16px var(--w-hand);color:var(--w-accent)}
+:root[data-style="warm"] .now ul{list-style:none;margin:2px 0 0;padding:0}
+:root[data-style="warm"] .now li{font:14.5px/1.65 var(--w-hand);color:var(--w-ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-style="warm"] .now li::before{content:"· ";color:var(--w-accent);font-weight:700}
+:root[data-style="warm"] .now li:first-child{color:var(--w-ink);font-size:16px;font-weight:600}
+:root[data-style="warm"] .now .t{font-family:var(--w-mono);font-size:12px;color:var(--w-dim);margin-right:6px}
+:root[data-style="warm"] .now .t:empty{display:none}
+
+/* 一串单元：一张张小纸签，点了跳到它那几张照片 */
+:root[data-style="warm"] .strip{display:flex;flex-wrap:wrap;gap:8px 10px;margin:22px 0 0}
+:root[data-style="warm"] .strip span{position:relative;background:var(--w-card);border:1.6px solid var(--w-ink);border-radius:13px 5px 11px 6px/6px 11px 5px 13px;padding:1px 11px 1px 26px;
+  font:600 14.5px/1.6 var(--w-hand);color:var(--w-ink);cursor:pointer;box-shadow:1px 2px 0 rgba(67,52,42,.16);transition:transform .15s}
+:root[data-style="warm"] .strip span:nth-child(odd){transform:rotate(-1.4deg)}
+:root[data-style="warm"] .strip span:nth-child(even){transform:rotate(1deg)}
+:root[data-style="warm"] .strip span:hover{transform:rotate(0) translateY(-2px)}
+:root[data-style="warm"] .strip span::before{content:"?";position:absolute;left:7px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--c);color:#fff;font:700 10px/14px var(--w-font);text-align:center}
+:root[data-style="warm"] .strip span.ok::before{content:"✓"}
+:root[data-style="warm"] .strip span.run::before{content:"…";line-height:9px}
+:root[data-style="warm"] .strip span.warn::before{content:"↻"}
+:root[data-style="warm"] .strip span.bad::before{content:"✕"}
+
+/* 剪出来的 */
+:root[data-style="warm"] .cuts{gap:18px}
+:root[data-style="warm"] .cut{width:min(460px,100%);margin:0;border:0;background:#fffefa;padding:10px 10px 6px;border-radius:3px;box-shadow:var(--w-shadow)}
+:root[data-style="warm"] .cut figcaption{font:13.5px var(--w-hand);color:var(--w-ink2);padding:5px 2px 0}
+
+/* 没排成照片墙时（脚本没跑起来）：照原来一行一个单元，只换颜色 */
+:root[data-style="warm"] .unit{border-top:1.5px dashed var(--w-line2)}
+:root[data-style="warm"] .chip{font:600 12.5px/18px var(--w-hand);padding:0 8px;border-radius:5px;border:1.6px solid var(--c);color:var(--c)}
+:root[data-style="warm"] .about{color:var(--w-ink2)}
+:root[data-style="warm"] figcaption{color:var(--w-ink2)}
+:root[data-style="warm"] figcaption ul,:root[data-style="warm"] .un{color:var(--w-ink2)}
+:root[data-style="warm"] .ph{background:var(--w-card2);color:var(--w-ink2)}
+
+/* 照片墙：每一次生成一张，三行对齐（单元的名字 / 照片 / 说明） */
+:root[data-style="warm"] main.fx-sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));column-gap:20px;row-gap:0;align-items:start}
+:root[data-style="warm"] main.fx-sheet>*{grid-column:1/-1}
+:root[data-style="warm"] main.fx-sheet>.fs-switch{grid-column:-2/-1;grid-row:1;justify-self:end;align-self:center;float:none;margin:0}
+:root[data-style="warm"] main.fx-sheet>h1{grid-column:1/-2;grid-row:1}
+:root[data-style="warm"] main.fx-sheet>.unit,:root[data-style="warm"] main.fx-sheet .takes{display:contents}
+:root[data-style="warm"] main.fx-sheet .takes>figure{position:relative;grid-row:span 3;display:grid;grid-template-rows:subgrid;grid-template-columns:minmax(0,1fr);width:auto;margin:0 0 24px;border:0;scroll-margin:90px;
+  transform:rotate(var(--fx-tilt,0deg));transition:transform .2s}
+:root[data-style="warm"] main.fx-sheet .takes>figure:hover{transform:rotate(0) translateY(-3px);z-index:2}
+:root[data-style="warm"] main.fx-sheet .fx-uh{grid-row:1;grid-column:1;align-self:start;min-width:0;padding:10px 4px 14px}
+:root[data-style="warm"] main.fx-sheet .fx-uh h3{display:flex;align-items:baseline;gap:8px;margin:0;font:600 22px/1.2 var(--w-hand);color:var(--w-ink);white-space:nowrap}
+:root[data-style="warm"] main.fx-sheet .fx-uh h3 small{margin-left:auto;font:14px var(--w-hand);color:var(--w-dim)}
+:root[data-style="warm"] main.fx-sheet .fx-uh .chip{display:none}      /* 单元的状态就是它最新一次的状态，那张照片上已经盖了章 */
+:root[data-style="warm"] main.fx-sheet .takes>figure:only-child .fx-uh h3 small{display:none}
+:root[data-style="warm"] main.fx-sheet .fx-uh .about{margin:1px 0 0;font:14px/1.4 var(--w-hand);color:var(--w-ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-style="warm"] main.fx-sheet .fx-uh .un{list-style:none;margin:2px 0 0;padding:0;font-size:12.5px;color:var(--w-dim)}
+:root[data-style="warm"] main.fx-sheet .fx-uh .un:empty{display:none}
+/* 第 2 次、第 3 次：从上一张连过来的一支手画的箭头 */
+:root[data-style="warm"] main.fx-sheet .fx-more{display:flex;align-items:center;gap:6px;box-sizing:border-box;height:40px;padding-bottom:0;font:14.5px var(--w-hand);color:var(--w-ink2)}      /* 和单元名字那一行一样高，箭头接在名字后面 */
+:root[data-style="warm"] main.fx-sheet .fx-more::before{content:"";flex:1;height:12px;margin-left:-22px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12' preserveAspectRatio='none'%3E%3Cpath d='M0 6c8-3 16 3 24 0s16-3 24 0' stroke='%2343342a' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-dasharray='7 5'/%3E%3C/svg%3E") left center/48px 12px repeat-x}
+:root[data-style="warm"] main.fx-sheet .fx-more::after{content:"";order:1;width:13px;height:14px;margin-left:-8px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 14'%3E%3Cpath d='M2 2c3 2 6 3 9 5-3 1-6 3-8 5' stroke='%2343342a' stroke-width='1.9' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+:root[data-style="warm"] main.fx-sheet .fx-more span{order:2;white-space:nowrap}
+/* 照片的白边：垫在画面和说明下面的一张纸 */
+:root[data-style="warm"] main.fx-sheet .takes>figure::before{content:"";grid-row:2/4;grid-column:1;background:#fffefa;border-radius:3px;box-shadow:var(--w-shadow);transition:box-shadow .2s}
+:root[data-style="warm"] main.fx-sheet .takes>figure:hover::before{box-shadow:0 2px 2px rgba(67,52,42,.1),0 14px 28px rgba(67,52,42,.2)}
+:root[data-style="warm"] main.fx-sheet .takes>figure.fx-hit::before{animation:warm-hit 1.3s ease-out}
+@keyframes warm-hit{0%,40%{box-shadow:0 0 0 7px var(--w-yellow),var(--w-shadow)}}
+/* 上沿的一段和纸胶带，颜色是这一次的状态 */
+:root[data-style="warm"] main.fx-sheet .takes>figure::after{content:"";grid-row:2;grid-column:1;align-self:start;justify-self:center;z-index:2;width:82px;height:22px;margin-top:-11px;transform:rotate(-2.5deg);pointer-events:none;
+  background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--c) 64%,transparent) 0 7px,color-mix(in srgb,var(--c) 46%,transparent) 7px 14px);box-shadow:0 1px 2px rgba(67,52,42,.2)}
+:root[data-style="warm"] main.fx-sheet .takes>figure:nth-child(even)::after{transform:rotate(2deg);justify-self:end;margin-right:34px}
+:root[data-style="warm"] main.fx-sheet .takes>figure>video,:root[data-style="warm"] main.fx-sheet .takes>figure>.ph{grid-row:2;grid-column:1;z-index:1;margin:11px 11px 0;width:calc(100% - 22px);height:auto;aspect-ratio:16/9;border-radius:2px;background-color:#2a2420}
+/* 平时是干净的照片，中间一个手画的播放圈；鼠标移上去或者在放的时候才出原生的播放条 */
+:root[data-style="warm"] main.fx-sheet .takes>figure>video::-webkit-media-controls{opacity:0;transition:opacity .15s}
+:root[data-style="warm"] main.fx-sheet .takes>figure:hover>video::-webkit-media-controls,:root[data-style="warm"] main.fx-sheet .takes>figure.fx-playing>video::-webkit-media-controls{opacity:1}
+:root[data-style="warm"] main.fx-sheet .takes>figure>video{background-image:none}
+:root[data-style="warm"] main.fx-sheet .fx-uh~video+figcaption::before,:root[data-style="warm"] main.fx-sheet .takes>figure>video+figcaption::before{content:"";position:absolute;left:50%;bottom:100%;z-index:2;width:52px;height:52px;margin:0 0 calc((100% - 22px) * 9 / 32 - 26px) -26px;pointer-events:none;transition:opacity .15s,transform .15s;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Cpath d='M26 4c13-1 22 9 22 22 0 12-9 22-22 22C13 48 4 39 4 26 4 14 12 5 26 4z' fill='%23fffefa' fill-opacity='.9' stroke='%2343342a' stroke-width='2.2'/%3E%3Cpath d='M21 17c5 3 9 6 14 9-5 3-9 6-14 9z' fill='%23d9744f' stroke='%2343342a' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+:root[data-style="warm"] main.fx-sheet .takes>figure:hover>figcaption::before,:root[data-style="warm"] main.fx-sheet .takes>figure.fx-playing>figcaption::before{opacity:0;transform:scale(.85)}
+@media (hover:none){
+  :root[data-style="warm"] main.fx-sheet .takes>figure>video::-webkit-media-controls{opacity:1}
+  :root[data-style="warm"] main.fx-sheet .takes>figure>figcaption::before{display:none}
+}
+/* 还没出片的：一张虚线框的空白相纸，上面一块场记板 */
+:root[data-style="warm"] main.fx-sheet .takes>figure>.ph{position:relative;flex-direction:column;gap:0;background:var(--w-card2);border:2px dashed var(--w-line2);border-radius:6px;color:var(--w-ink2);font:15.5px/1.55 var(--w-hand)}
+:root[data-style="warm"] main.fx-sheet .takes>figure>.ph::before{content:"";width:46px;height:40px;margin-bottom:4px;animation:warm-bob 2.6s ease-in-out infinite;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 40'%3E%3Cg fill='none' stroke='%2343342a' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M5 17h36v19c0 1-1 2-2 2H7c-1 0-2-1-2-2z' fill='%23fffefa'/%3E%3Cpath d='M5 17l-2-8 35-7 2 8z' fill='%2343342a'/%3E%3Cpath d='M11 8l4 7M20 6l4 8M29 4l4 8' stroke='%23fffefa'/%3E%3Cpath d='M11 25h24M11 31h15'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+@keyframes warm-bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+:root[data-style="warm"] main.fx-sheet .takes>figure.bad>.ph{border-color:var(--w-bad);color:var(--w-bad)}
+:root[data-style="warm"] main.fx-sheet .takes>figure.bad>.ph::before{animation:none;opacity:.5}
+/* 说明：名字、用了多久，右上角一枚状态的印章 */
+:root[data-style="warm"] main.fx-sheet .takes>figure>figcaption{position:relative;grid-row:3;grid-column:1;z-index:1;padding:8px 13px 13px;font-size:12.5px;color:var(--w-ink2);min-width:0}
+:root[data-style="warm"] main.fx-sheet figcaption b{font:600 12.5px var(--w-mono);color:var(--w-ink);margin-right:8px}
+:root[data-style="warm"] main.fx-sheet figcaption .fx-m{font:13.5px var(--w-hand);color:var(--w-dim);margin-right:8px;white-space:nowrap}
+:root[data-style="warm"] main.fx-sheet .takes>figure:has(>.ph) figcaption .fx-m{display:none}      /* 还没出片：等了多久已经写在相纸上 */
+:root[data-style="warm"] main.fx-sheet figcaption[data-fx-state]::after{content:attr(data-fx-state);position:absolute;right:11px;top:5px;font:600 13.5px/1.55 var(--w-hand);color:var(--c);border:1.8px solid var(--c);
+  border-radius:6px 4px 7px 4px;padding:0 8px;transform:rotate(-5deg);background:color-mix(in srgb,var(--c) 9%,#fffefa)}
+:root[data-style="warm"] main.fx-sheet figcaption ul{list-style:none;margin:5px 0 0;padding:0;color:var(--w-ink2);font-size:13px;line-height:1.55}
+:root[data-style="warm"] main.fx-sheet figcaption li{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+@media (min-width:1100px){
+  :root[data-style="warm"] main.fx-sheet>.story{grid-column:1/span 2}
+  :root[data-style="warm"] main.fx-sheet>.story+.now{grid-column:3/-1;align-self:start}
+}
+@media (max-width:700px){
+  :root[data-style="warm"] main{padding:14px 14px 40px}
+  :root[data-style="warm"] main.fx-sheet>h1,:root[data-style="warm"] main.fx-sheet>.fs-switch{grid-column:1/-1;grid-row:auto;justify-self:start}
+  :root[data-style="warm"] .fx-say b{font-size:17px}
+  :root[data-style="warm"] .now li{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){
+  :root[data-style="warm"] *,:root[data-style="warm"] *::before,:root[data-style="warm"] *::after{animation:none!important;transition:none!important}
+}

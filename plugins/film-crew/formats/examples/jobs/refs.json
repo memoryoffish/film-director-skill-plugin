@@ -1,0 +1,14 @@
+{
+ "name": "ex_refs",
+ "duration": 5,
+ "resolution": "720P",
+ "ratio": "16:9",
+ "audio": true,
+ "prompt_extend": false,
+ "seed": 21,
+ "prompt": "镜头：近景，固定机位。桌上那只蓝色杯子被一束斜阳慢慢照亮。\n参考图：图1是那只蓝色杯子，只用来锁住它的样子和颜色。图2是这个镜头开头的白模站位示意图，只用来定机位和构图：绿色方块就是杯子的位置。\n声音：很轻的室内环境声，没有配乐，没有人声。",
+ "reference_images": [
+  "media/cup.png",
+  "media/wm_s1.png"
+ ]
+}

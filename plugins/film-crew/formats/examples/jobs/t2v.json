@@ -1,0 +1,10 @@
+{
+ "name": "ex_t2v",
+ "duration": 5,
+ "resolution": "720P",
+ "ratio": "16:9",
+ "audio": true,
+ "prompt_extend": false,
+ "seed": 7,
+ "prompt": "A white ceramic teapot on a wooden table by a window. Steam rises slowly; rain runs down the glass behind it. Fixed camera, close-up, one continuous shot, no cuts. Sound: soft rain on the glass, no music, no speech."
+}

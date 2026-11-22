@@ -1,0 +1,9 @@
+{
+ "name": "ex_key_s1",
+ "size": "1536x864",
+ "images": [
+  "media/wm_s1.png",
+  "media/cup.png"
+ ],
+ "prompt": "Turn Image 1 into a photorealistic film still, 16:9.\n\nImage 1 is a 3D blocking render (white model). Use it only as the layout guide: keep its camera position, framing and the place of every object.\n- The green box is the blue cup from Image 2, standing on a wooden table.\n- The blue block is a tall potted plant.\n\nThe boxes in Image 1 are only position markers: do not draw any box or flat plastic shading, no text, no watermark."
+}

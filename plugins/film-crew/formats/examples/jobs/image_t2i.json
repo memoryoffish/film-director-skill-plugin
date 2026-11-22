@@ -1,0 +1,8 @@
+{
+ "name": "ex_cup_sheet",
+ "model": "gpt-image-2.6-sunburst",
+ "quality": "high",
+ "size": "1024x1024",
+ "n": 1,
+ "prompt": "A product photo of one plain blue ceramic cup on a white background, soft daylight from the left, no text, no logo."
+}

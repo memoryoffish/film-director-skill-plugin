@@ -1,0 +1,11 @@
+{
+ "name": "smoke_wan",
+ "model": "wan3.0-video",
+ "duration": 2,
+ "resolution": "480P",
+ "ratio": "16:9",
+ "audio": true,
+ "prompt_extend": false,
+ "seed": 1,
+ "prompt": "A white ceramic teapot on a wooden table by a rainy window. Steam rises slowly from the spout. Fixed camera, close-up, one continuous shot, no cuts. Sound: soft rain on the glass, no music, no speech."
+}

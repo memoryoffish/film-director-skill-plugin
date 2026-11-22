@@ -1,0 +1,14 @@
+{
+ "name": "ex_ref_video",
+ "duration": 5,
+ "resolution": "720P",
+ "ratio": "16:9",
+ "audio": true,
+ "prompt_extend": false,
+ "seed": 31,
+ "prompt": "镜头：全景，镜头跟着蓝色方块从左往右平移。\n视频1是这个镜头的白模预演，只用来定机位、运镜和走位的路线：蓝色方块就是那只蓝色杯子被推过桌面的路线。图1是那只蓝色杯子，只用来锁住它的样子。\n声音：杯子擦过木桌的声音，没有配乐，没有人声。",
+ "reference_video": "media/previz.mp4",
+ "reference_images": [
+  "media/cup.png"
+ ]
+}

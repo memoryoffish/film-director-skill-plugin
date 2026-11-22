@@ -1,0 +1,15 @@
+/* 暖心：摊在桌上的拍片手账。这一份只定颜色、字体、圆角、阴影；每一页都带着它。 */
+:root[data-style="warm"]{
+  color-scheme:light;
+  --w-desk:#efe5d3;--w-paper:#fbf5e9;--w-card:#fffcf5;--w-card2:#f7eedc;      /* 桌面、纸、卡片、压一层的纸 */
+  --w-line:#e2d3ba;--w-line2:#cdb999;
+  --w-ink:#43342a;--w-ink2:#6d5a4b;--w-dim:#9b8872;
+  --w-accent:#d9744f;--w-yellow:#ffe08a;--w-pink:#f2a9a0;--w-sky:#9cc2e0;--w-leaf:#9cc79a;   /* 赤陶、便签黄、粉、天蓝、叶绿 */
+  --w-ok:#5a9a69;--w-warn:#d48a2a;--w-run:#5b8fc4;--w-bad:#cc5a4b;--w-idle:#a99b88;        /* 状态：合格 要重抽 进行中 失败 待检查 */
+  --w-wm:#5f8fc6;--w-in:#c98a24;--w-fed:#5a9a69;--w-film:#cf6c8c;                          /* 四种东西：白模 出图用的 进视频模型的 成片 */
+  --w-r:12px;--w-r2:7px;
+  --w-shadow:0 1px 1px rgba(67,52,42,.08),0 6px 16px rgba(67,52,42,.12);
+  --w-hand:"Hannotate SC","HanziPen SC","Kaiti SC","STKaiti","KaiTi",cursive;      /* 手写：标题、图注、便签 */
+  --w-font:"Yuanti SC","PingFang SC",-apple-system,BlinkMacSystemFont,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;   /* 正文：圆体 */
+  --w-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}

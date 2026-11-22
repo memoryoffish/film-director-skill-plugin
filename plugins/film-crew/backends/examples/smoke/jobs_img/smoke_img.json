@@ -1,0 +1,8 @@
+{
+ "name": "smoke_img",
+ "size": "1536x864",
+ "images": [
+  "media/box_wm.png"
+ ],
+ "prompt": "Turn Image 1 into a photorealistic photo, 16:9. Image 1 is a 3D blocking render: keep its camera position, framing, and the place and size of the box exactly. The box is a weathered wooden crate standing on a concrete floor in front of a pale plaster wall; soft morning light from the left. Nothing else in the room: no people, no text, no watermark."
+}

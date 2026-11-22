@@ -1,0 +1,21 @@
+{
+  "name": "film-director",
+  "owner": {
+    "name": "memoryoffish"
+  },
+  "description": "Direct a short film from a script with a coding agent: one skill for the filmmaking method, one plugin for the tools around it.",
+  "plugins": [
+    {
+      "name": "film-director",
+      "source": "./skills/film-director",
+      "description": "The filmmaking skill, all in one: script to film in four steps with a transitions library (video-film-maker), Blender proxy blocking for space, cameras and timing (blender-previz), and picking sound effects from Freesound (refsound).",
+      "category": "video-making"
+    },
+    {
+      "name": "film-crew",
+      "source": "./plugins/film-crew",
+      "description": "The tools around the skill, all in one: send job sheets to video and image models, view a run on a web page (showcase, node graph, progress), open each shot in ComfyUI as a workflow, and the hand-off formats they share.",
+      "category": "video-making"
+    }
+  ]
+}
