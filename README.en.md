@@ -106,6 +106,12 @@ Little Claude shows what is in the repository and how to install it, then runs t
 
 https://github.com/user-attachments/assets/b0cd254f-116d-48fd-bf1d-99848953ba83
 
+## Feedback and contributing
+
+This is still being refined. If something breaks or you have an idea, open an [issue](https://github.com/memoryoffish/film-director-skill-plugin/issues) or leave a comment under the [blog post](https://memoryoffish.github.io/2026/11/22/film-director/). We read everything, reply, and fix things as fast as we can.
+
+Help keeping it up to date is very welcome: new transitions and examples, support for more video models, or anything the docs leave unclear — just open a pull request. And if you make a film with it, we'd love to see it.
+
 ## Acknowledgements
 
 The methods here draw on public tutorials and open-source projects, and each one is credited where it is used: the sources of every transition and editing rule are in `skills/film-director/video-film-maker/refs/background/sources/by-method.md`, and the origin of refsound's selection rules is in `skills/film-director/refsound/GUIDE.md`.

@@ -106,6 +106,12 @@ claude plugin install film-crew --marketplace memoryoffish/film-director-skill-p
 
 https://github.com/user-attachments/assets/b0cd254f-116d-48fd-bf1d-99848953ba83
 
+## 反馈与参与
+
+这套做法还在一直打磨。用着遇到问题、有新想法，欢迎在 [Issues](https://github.com/memoryoffish/film-director-skill-plugin/issues) 里提，或者在[博客文章](https://memoryoffish.github.io/2026/11/22/film-director/)下面留言，我们都会积极回应、尽快完善。
+
+也欢迎一起更新维护：新的接法和案例、更多视频模型的适配、文档里没写清楚的地方，都可以直接提 Pull Request。用它拍出了片子，也欢迎分享给我们看看。
+
 ## 致谢
 
 这里的做法借鉴了不少公开教程和开源项目，出处都写在用到的地方：各接法、剪辑规则的出处见 `skills/film-director/video-film-maker/refs/background/sources/by-method.md`，refsound 选材规则的来源见 `skills/film-director/refsound/GUIDE.md`。
