@@ -120,6 +120,34 @@ The Freesound recordings used in the promo are credited in [CREDITS.md](CREDITS.
 
 Thanks to [LINUX DO](https://linux.do/) for a community space for technical exchange and open-source sharing.
 
+## Citation
+
+If this project helps you, please also consider citing our related work: [ATAS](http://lhmd.top/atas), a world-state-centric framework for agentic video generation, and [ReCA](https://reca.vmv.re/), multi-shot long video extrapolation via recursive context allocation.
+
+```bibtex
+@article{wang2026atas,
+  title     = {Any Time, Any Space: A World-State-Centric Framework for Agentic Video Generation},
+  author    = {Wang, Weijie and Zhang, Haomin and Li, Ye and Liu, Akide and Zhang, Zeyu and Zhao, Haoyu and
+               He, Yefei and Chen, Donny Y. and Chen, Feng and Zhuang, Bohan},
+  journal   = {arXiv preprint arXiv:2610.20571},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2610.20571}
+}
+
+@article{liu2026reca,
+  title         = {ReCA: Multi-Shot Long Video Extrapolation via Recursive Context Allocation},
+  author        = {Liu, Akide and Xing, Jinbo and Mao, Chaojie and Li, Ye and
+                   Zhang, Zeyu and He, Yefei and Wang, Weijie and Wang, Zihan and
+                   Liu, Yu and Haffari, Gholamreza and Zhuang, Bohan},
+  journal       = {arXiv preprint arXiv:2605.26525},
+  year          = {2026},
+  eprint        = {2605.26525},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2605.26525}
+}
+```
+
 ## License
 
 [Apache-2.0](LICENSE). Third-party assets keep their own licenses: the KayKit furniture models in `skills/film-director/blender-previz/assets/` are CC0 (see the `LICENSE.txt` there).

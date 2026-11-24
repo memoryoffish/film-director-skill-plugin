@@ -120,6 +120,34 @@ https://github.com/user-attachments/assets/b0cd254f-116d-48fd-bf1d-99848953ba83
 
 感谢 [LINUX DO](https://linux.do/) 提供技术交流与开源分享的社区空间。
 
+## 引用
+
+如果这个项目对你有帮助，也欢迎引用我们的相关工作：[ATAS](http://lhmd.top/atas)（以世界状态为中心的 agent 视频生成）和 [ReCA](https://reca.vmv.re/)（递归分配上下文的多镜头长视频生成）。
+
+```bibtex
+@article{wang2026atas,
+  title     = {Any Time, Any Space: A World-State-Centric Framework for Agentic Video Generation},
+  author    = {Wang, Weijie and Zhang, Haomin and Li, Ye and Liu, Akide and Zhang, Zeyu and Zhao, Haoyu and
+               He, Yefei and Chen, Donny Y. and Chen, Feng and Zhuang, Bohan},
+  journal   = {arXiv preprint arXiv:2610.20571},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2610.20571}
+}
+
+@article{liu2026reca,
+  title         = {ReCA: Multi-Shot Long Video Extrapolation via Recursive Context Allocation},
+  author        = {Liu, Akide and Xing, Jinbo and Mao, Chaojie and Li, Ye and
+                   Zhang, Zeyu and He, Yefei and Wang, Weijie and Wang, Zihan and
+                   Liu, Yu and Haffari, Gholamreza and Zhuang, Bohan},
+  journal       = {arXiv preprint arXiv:2605.26525},
+  year          = {2026},
+  eprint        = {2605.26525},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2605.26525}
+}
+```
+
 ## 许可证
 
 [Apache-2.0](LICENSE)。第三方资产保留各自的许可：`skills/film-director/blender-previz/assets/` 里的 KayKit 家具模型是 CC0（见该目录的 `LICENSE.txt`）。
