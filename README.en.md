@@ -14,23 +14,23 @@
 
 <p align="center"><b>English</b> · <a href="README.md">中文</a></p>
 
-https://github.com/user-attachments/assets/5f7ced7c-2008-4ca4-a46f-a5e1711ee11f
+https://github.com/user-attachments/assets/9275063a-a0b1-49e7-b7a1-4425d455ca11
 
 <p align="center"><sub>The 3-minute promo: Claude is handed the skill and directs four short films; all the film footage in it comes from real runs.</sub></p>
 
-**Film Director lets an agent shoot a film the way a director would.**<br>
-It decides what the audience should see before anything is generated, blocks the space with a Blender proxy, generates and checks the film shot by shot, and cuts it with sound.
+**How do you make a short film with real art-house quality, instead of another AI drama that looks fake at a glance?**<br>
+Film Director's answer: put the cut, which drives the story's rhythm, at the core; model the world with a Blender proxy; then add professional sound and the edit no film can do without.
 
 ## Highlights
 
 <table>
   <tr>
-    <td width="50%"><b>🎬 Shots and cuts</b><br>A shot list before any generation: what each shot shows, how long it holds, and how every cut joins, with a transitions library of worked examples.</td>
-    <td width="50%"><b>🧊 Blender proxy</b><br>Positions, facing, cameras and door directions are blocked in Blender first. The renders guide the video model, and the film is checked against them.</td>
+    <td width="50%"><b>🎬 Cuts · fewer jarring jumps, a rhythm you control</b><br>Joins between clips, scene changes, time jumps and flashbacks each get a purpose-built transition — occlusion, doorway, push-through, flash to white, match cut, medium change and more, eight in all, each with real examples.</td>
+    <td width="50%"><b>🧊 Blender proxy · a model of the world</b><br>The scene's world is built in Blender first, with positions, facing, cameras and door directions all set. The renders guide the video model as its reference, and the film is checked against them.</td>
   </tr>
   <tr>
-    <td width="50%"><b>🔊 Sound and edit</b><br>Sound effects picked from Freesound by what listeners left behind, CC0 and CC-BY only with attribution, then cut against the picture.</td>
-    <td width="50%"><b>✂️ Post and repair</b><br>Trims, seams and takes are joined into one scene, and every shot's inputs stay open to inspect on a web page or as a ComfyUI workflow.</td>
+    <td width="50%"><b>🔊 Sound · treated as engineering</b><br>Dialogue, ambience, effects and music on separate layers, sound carried across every seam, loudness evened out clip by clip; effects are real Freesound recordings chosen by what listeners left behind, CC0 and CC-BY only, credited.</td>
+    <td width="50%"><b>✂️ Editing · indispensable</b><br>Cut on action, pace to the rhythm, match the grade and mend every seam, turning clips into one scene; every shot's inputs stay open to inspect on a web page or as a ComfyUI workflow.</td>
   </tr>
 </table>
 
@@ -99,6 +99,12 @@ Put a script in a folder and ask the agent, for example:
 2. It writes a job sheet for every generation and sends it to the video model, either with the skill's own scripts or, if film-crew is installed, through its backends (`request` shows exactly what would be sent before anything is spent).
 3. It checks each clip as it comes back, re-shoots what is wrong, and cuts the film.
 4. To look at the run with film-crew's viewer or in ComfyUI, the run folder also needs a shot table (`meta.json`: which job each shot came from and where it sits in the film). Ask the agent to write it after the cut; the format is in `plugins/film-crew/formats/`.
+
+### Walkthrough video
+
+Little Claude shows what is in the repository and how to install it, then runs the steps above for real: a one-line script → shot list → Blender proxy → keyframes → job sheets → progress page → finished film → showcase and node graph.
+
+https://github.com/user-attachments/assets/b0cd254f-116d-48fd-bf1d-99848953ba83
 
 ## Acknowledgements
 

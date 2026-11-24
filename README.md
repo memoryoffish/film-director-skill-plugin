@@ -14,23 +14,23 @@
 
 <p align="center"><a href="README.en.md">English</a> · <b>中文</b></p>
 
-https://github.com/user-attachments/assets/5f7ced7c-2008-4ca4-a46f-a5e1711ee11f
+https://github.com/user-attachments/assets/a04ff5a5-4d7e-41e2-aefc-db15f3bacc5c
 
 <p align="center"><sub>3 分钟宣传片：Claude 拿到这份 skill，当导演拍了四部短片，其中的影片画面都出自真实运行。</sub></p>
 
-**Film Director 让 agent 像导演一样拍片。**<br>
-生成之前先想清楚观众该看见什么，用 Blender 白模把空间定准，再一镜一镜生成、检查，最后配上声音剪成片。
+**如何拍出有高级艺术感的电影短片，而不是一眼便假的 AI 短剧？**<br>
+Film Director 的答案：把能主导叙事节奏的切镜放进核心，用白模建模世界，再加上专业的配音和不可或缺的后期剪辑。
 
 ## 特点
 
 <table>
   <tr>
-    <td width="50%"><b>🎬 切镜</b><br>生成之前先排镜头表：每一镜拍什么、停多久、每一刀怎么接；接法库里每种接法都有实拍案例。</td>
-    <td width="50%"><b>🧊 白模</b><br>站位、朝向、机位、门往哪开，先在 Blender 里定准；白模的渲染图喂给视频模型，成片也对着它查。</td>
+    <td width="50%"><b>🎬 切镜 · 减少短片突变，掌控叙事节奏</b><br>clip 之间的衔接、换场、换时间、进出回忆（闪回）都有专门的切法：遮挡、穿门洞、推镜穿越、闪白、匹配剪辑、媒介转变等八种接法，每种都有实拍案例。</td>
+    <td width="50%"><b>🧊 白模 · 建模世界</b><br>先在 Blender 里把这场戏的世界搭出来：站位、朝向、机位、门往哪开都定准；白模的渲染图喂给视频模型当参照，成片也对着它查。</td>
   </tr>
   <tr>
-    <td width="50%"><b>🔊 音效剪辑</b><br>照听过的人留下的信号从 Freesound 挑音效，只取 CC0 和 CC-BY、带署名，再对着画面剪进去。</td>
-    <td width="50%"><b>✂️ 后期片段剪辑</b><br>挑条、修剪、处理接缝，把几段接成一场戏；每一镜喂了什么，都能在网页或 ComfyUI 工作流里打开看。</td>
+    <td width="50%"><b>🔊 配音 · 当工程来做</b><br>台词、环境声、音效、配乐分层处理，接缝处让声音跨过去，响度逐段拉平；音效照听过的人留下的信号从 Freesound 挑真实录音，只取 CC0 和 CC-BY、带署名。</td>
+    <td width="50%"><b>✂️ 后期剪辑 · 不可或缺</b><br>动作上剪、按节奏定长短、统一调色、处理每一个接缝，把几段剪成一场戏；每一镜喂了什么，都能在网页或 ComfyUI 工作流里打开看。</td>
   </tr>
 </table>
 
@@ -99,6 +99,12 @@ claude plugin install film-crew --marketplace memoryoffish/film-director-skill-p
 2. 每一次生成写一份任务单，交给视频模型：用 skill 自带的脚本，或者装了 film-crew 的话交给它的后端（`request` 先把要发的请求原样打出来，看过再花钱）。
 3. 每段片子回来马上检查，不对的重拍，最后剪成片。
 4. 要用 film-crew 的查看器或在 ComfyUI 里看这次拍片，运行目录里还要有一份镜头表（`meta.json`：每一镜出自哪个任务、在成片里的起止）。剪完让 agent 照分镜和剪辑结果写一份；格式在 `plugins/film-crew/formats/`。
+
+### 讲解片
+
+小 Claude 讲仓库里有什么、怎么装，再照着上面的步骤真跑一遍：一句话交剧本 → 镜头表 → 白模 → 关键帧 → 任务单 → 进度页 → 成片 → 展示台和节点图。
+
+https://github.com/user-attachments/assets/b0cd254f-116d-48fd-bf1d-99848953ba83
 
 ## 致谢
 
